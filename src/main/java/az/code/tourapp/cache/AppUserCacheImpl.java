@@ -1,7 +1,7 @@
 package az.code.tourapp.cache;
 
 import az.code.tourapp.dtos.BotState;
-import az.code.tourapp.models.AppUser;
+import az.code.tourapp.dtos.AppUserDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -14,12 +14,12 @@ import java.util.Map;
  */
 
 @Component
-public class UserDataCache implements DataCache {
-    private final Map<Long, AppUser> userMap = new HashMap<>();
+public class AppUserCacheImpl implements AppUserCache {
+    private final Map<Long, AppUserDTO> userMap = new HashMap<>();
 
     @Override
     public void setAppUserBotState(Long userId, BotState botState) {
-        AppUser user = getAppUserData(userId);
+        AppUserDTO user = getAppUserData(userId);
         saveAppUserData(userId, user.toBuilder().botState(botState).build());
     }
 
@@ -29,12 +29,17 @@ public class UserDataCache implements DataCache {
     }
 
     @Override
-    public AppUser getAppUserData(Long userId) {
+    public boolean existsById(Long userId) {
+        return getAppUserData(userId) != null;
+    }
+
+    @Override
+    public AppUserDTO getAppUserData(Long userId) {
         return userMap.get(userId);
     }
 
     @Override
-    public void saveAppUserData(Long userId, AppUser appUser) {
+    public void saveAppUserData(Long userId, AppUserDTO appUser) {
         userMap.put(userId, appUser);
     }
 }

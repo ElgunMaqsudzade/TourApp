@@ -20,6 +20,7 @@ public class BotConfig {
     private String path;
     private String username;
     private String token;
+    private String messageSource;
     private String lang;
     private BotProxyProps proxy;
 
