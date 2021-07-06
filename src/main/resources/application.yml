@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost/telegrambot
+    password: salam123
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+telegrambot:
+  username: '@MyTourAppBot'
+  path: https://01662077f68b.ngrok.io
+  token: 1638447550:AAGL3wR5YBy3juayAx7borJc8XTrDDBX8G4
+  proxy:
+    type: no_proxy
+  lang: 'en-EN'
+
+
+
