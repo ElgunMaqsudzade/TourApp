@@ -1,23 +1,28 @@
 package az.code.tourapp.components;
 
-import az.code.tourapp.cache.UserDataCache;
+import az.code.tourapp.cache.AppUserCacheImpl;
+import az.code.tourapp.configs.BotConfig;
+import az.code.tourapp.dtos.AppUserDTO;
 import az.code.tourapp.dtos.BotState;
-import az.code.tourapp.models.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Locale;
+
 @Component
 @Slf4j
 public class TelegramFacade {
-    private UserDataCache userDataCache;
-    private BotStateContext stateContext;
+    AppUserCacheImpl userDataCache;
+    BotStateContext stateContext;
+    BotConfig config;
 
-    public TelegramFacade(UserDataCache userDataCache, BotStateContext stateContext) {
+    public TelegramFacade(AppUserCacheImpl userDataCache, BotStateContext stateContext, BotConfig config) {
         this.userDataCache = userDataCache;
         this.stateContext = stateContext;
+        this.config = config;
     }
 
     public SendMessage handleUpdate(Update update) {
@@ -36,16 +41,17 @@ public class TelegramFacade {
         String inputMsg = message.getText();
         long userId = message.getFrom().getId();
 
-        if (message.isCommand() && inputMsg.equals("/start")) {
-            userDataCache.saveAppUserData(userId, AppUser
+        if (message.isCommand() && inputMsg.equals("/start") && userDataCache.existsById(userId)) {
+            userDataCache.saveAppUserData(userId, AppUserDTO
                     .builder()
                     .id(userId)
+                    .lang(Locale.forLanguageTag(config.getLang()))
                     .mainState(BotState.START)
                     .botState(BotState.START)
                     .build());
         }
 
-        AppUser appUser = userDataCache.getAppUserData(userId);
+        AppUserDTO appUser = userDataCache.getAppUserData(userId);
 
 //        BotState botState = BasicUtil.getCommandState(inputMsg);
 //        appUser.setBotState(botState);
