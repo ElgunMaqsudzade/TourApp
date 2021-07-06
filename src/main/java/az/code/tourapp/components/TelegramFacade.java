@@ -41,7 +41,7 @@ public class TelegramFacade {
         String inputMsg = message.getText();
         long userId = message.getFrom().getId();
 
-        if (message.isCommand() && inputMsg.equals("/start") && userDataCache.existsById(userId)) {
+        if (message.isCommand() && inputMsg.equals("/start") && !userDataCache.existsById(userId)) {
             userDataCache.saveAppUserData(userId, AppUserDTO
                     .builder()
                     .id(userId)
