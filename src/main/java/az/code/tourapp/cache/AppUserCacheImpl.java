@@ -1,7 +1,8 @@
 package az.code.tourapp.cache;
 
-import az.code.tourapp.dtos.BotState;
-import az.code.tourapp.dtos.AppUserDTO;
+
+import az.code.tourapp.exceptions.NotFound;
+import az.code.tourapp.models.BotState;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -15,17 +16,20 @@ import java.util.Map;
 
 @Component
 public class AppUserCacheImpl implements AppUserCache {
-    private final Map<Long, AppUserDTO> userMap = new HashMap<>();
+    private final Map<Long, Map<String, String>> userMap = new HashMap<>();
+
 
     @Override
     public void setAppUserBotState(Long userId, BotState botState) {
-        AppUserDTO user = getAppUserData(userId);
-        saveAppUserData(userId, user.toBuilder().botState(botState).build());
+        Map<String, String> user = getAppUserData(userId);
+        user.put("STATE", botState.getState());
     }
 
     @Override
-    public BotState getAppUserBotState(Long userId) {
-        return getAppUserData(userId).getBotState();
+    public String getAppUserBotState(Long userId) {
+        if (getAppUserData(userId).get("STATE").isEmpty()) throw new NotFound("Corresponding state not found");
+
+        return getAppUserData(userId).get("STATE");
     }
 
     @Override
@@ -34,12 +38,12 @@ public class AppUserCacheImpl implements AppUserCache {
     }
 
     @Override
-    public AppUserDTO getAppUserData(Long userId) {
+    public Map<String, String> getAppUserData(Long userId) {
         return userMap.get(userId);
     }
 
     @Override
-    public void saveAppUserData(Long userId, AppUserDTO appUser) {
-        userMap.put(userId, appUser);
+    public void saveAppUserData(Long userId, Map<String, String> userData) {
+        userMap.put(userId, userData);
     }
 }

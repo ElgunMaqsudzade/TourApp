@@ -1,18 +1,20 @@
 package az.code.tourapp.cache;
 
-import az.code.tourapp.dtos.BotState;
-import az.code.tourapp.dtos.AppUserDTO;
+
+import az.code.tourapp.models.BotState;
+
+import java.util.Map;
 
 
 public interface AppUserCache {
 
     void setAppUserBotState(Long userId, BotState botState);
 
-    BotState getAppUserBotState(Long userId);
+    String getAppUserBotState(Long userId);
 
     boolean existsById(Long userId);
 
-    AppUserDTO getAppUserData(Long userId);
+    Map<String, String> getAppUserData(Long userId);
 
-    void saveAppUserData(Long userId, AppUserDTO userProfileData);
+    void saveAppUserData(Long userId, Map<String, String> userData);
 }

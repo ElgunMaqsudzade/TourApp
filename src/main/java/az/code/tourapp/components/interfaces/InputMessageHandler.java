@@ -9,5 +9,5 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 public interface InputMessageHandler {
     SendMessage handle(Message message);
 
-    BotState getMainState();
+    String getMainState();
 }

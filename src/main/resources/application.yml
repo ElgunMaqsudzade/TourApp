@@ -1,15 +1,16 @@
 spring:
   datasource:
-    url: jdbc:postgresql://ec2-54-73-147-133.eu-west-1.compute.amazonaws.com/d4sd7us8tju5n2
-    password: ad2ab30c7a29a108d0059f775aeb994a255b37cbc51d948ff17c6cfa1bff20d5
-    username: wwrezbadkpcjqu
+    url: jdbc:postgresql://localhost/telegrambot
+    password: salam123
+    username: postgres
   jpa:
     hibernate:
       ddl-auto: update
+    open-in-view: false
 
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://07451dd99d2a.ngrok.io
+  path: https://85892a9f70d8.ngrok.io
   token: 1638447550:AAGL3wR5YBy3juayAx7borJc8XTrDDBX8G4
   proxy:
     type: no_proxy
