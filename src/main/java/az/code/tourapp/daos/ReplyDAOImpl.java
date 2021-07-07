@@ -22,7 +22,8 @@ public class ReplyDAOImpl implements ReplyDAO {
     @Override
     public Reply getReply(String state, String locale) {
         Specification<Reply> replySpecification = Specification.where((rt, q, cb) -> cb
-                .or(cb.equal(rt.get("state").get("state"), state)));
+                .and(cb.equal(rt.get("state").get("state"), state),
+                        cb.equal(rt.get("locale").get("locale"), locale)));
 
         Optional<Reply> reply = replyRepo.findAll(replySpecification).stream().findFirst();
         if (reply.isEmpty()) throw new NotFound("Corresponding reply not found");

@@ -1,20 +1,18 @@
 package az.code.tourapp.components;
 
+
+import az.code.tourapp.TelegramWHBot;
 import az.code.tourapp.cache.AppUserCacheImpl;
-import az.code.tourapp.configs.BotConfig;
-import az.code.tourapp.daos.interfaces.ActionDAO;
-import az.code.tourapp.dtos.BotState;
+import az.code.tourapp.components.statehandlers.CallBackHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 @Component
@@ -22,25 +20,23 @@ import java.util.Map;
 public class TelegramFacade {
     AppUserCacheImpl userDataCache;
     BotStateContext stateContext;
-    BotConfig config;
-    ActionDAO actionDAO;
+    CallBackHandler callBackHandler;
 
-    public TelegramFacade(AppUserCacheImpl userDataCache, BotStateContext stateContext, BotConfig config, ActionDAO actionDAO) {
+    public TelegramFacade(AppUserCacheImpl userDataCache, BotStateContext stateContext, CallBackHandler callBackHandler) {
         this.userDataCache = userDataCache;
         this.stateContext = stateContext;
-        this.config = config;
-        this.actionDAO = actionDAO;
+        this.callBackHandler = callBackHandler;
     }
 
     public BotApiMethod<?> handleUpdate(Update update) {
-        SendMessage replyMessage = null;
+        BotApiMethod<?> replyMessage = null;
 
 
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             log.info("New callbackQuery from User: {}, userId: {}, with data: {}", update.getCallbackQuery().getFrom().getUserName(),
                     callbackQuery.getFrom().getId(), update.getCallbackQuery().getData());
-            return processCallbackQuery(callbackQuery);
+            return callBackHandler.processCallbackQuery(callbackQuery);
         }
 
 
@@ -53,7 +49,7 @@ public class TelegramFacade {
         return replyMessage;
     }
 
-    private SendMessage handleInputMessage(Message message) {
+    private BotApiMethod<?> handleInputMessage(Message message) {
         String inputMsg = message.getText();
         long userId = message.getFrom().getId();
 
@@ -62,40 +58,17 @@ public class TelegramFacade {
             Map<String, String> userMap = new HashMap<>();
             userMap.put("STATE", "START");
             userMap.put("MAINSTATE", "START");
-            userMap.put("LOCALE", "en-EN");
+            userMap.put("LOCALE", "ENG");
             userDataCache.saveAppUserData(userId, userMap);
         }
 
 
         Map<String, String> appUser = userDataCache.getAppUserData(userId);
-        String botState = userDataCache.getAppUserBotState(userId);
+        String mainState = appUser.get("MAINSTATE");
 
 //        BotState botState = BasicUtil.getCommandState(inputMsg);
 //        appUser.setBotState(botState);
 
-        return stateContext.processInputMessage(botState, message);
+        return stateContext.processInputMessage(mainState, message);
     }
-
-
-    private BotApiMethod<?> processCallbackQuery(CallbackQuery buttonQuery) {
-        final long chatId = buttonQuery.getMessage().getChatId();
-        final long userId = buttonQuery.getFrom().getId();
-
-        BotApiMethod<?> callBackAnswer = null;
-
-        callBackAnswer = new SendMessage(chatId, "Как тебя зовут ?");
-        userDataCache.setAppUserBotState(userId,actionDAO. );
-
-
-        return callBackAnswer;
-    }
-
-    private AnswerCallbackQuery sendAnswerCallbackQuery(String text, boolean alert, CallbackQuery callbackquery) {
-        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
-        answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
-        answerCallbackQuery.setShowAlert(alert);
-        answerCallbackQuery.setText(text);
-        return answerCallbackQuery;
-    }
-
 }

@@ -8,19 +8,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Setter
 @Getter
 @Slf4j
-public class TelegramBot extends TelegramWebhookBot {
+public class TelegramWHBot extends TelegramWebhookBot {
     private String botPath;
     private String botUsername;
     private String botToken;
 
     private TelegramFacade telegramFacade;
 
-    public TelegramBot(DefaultBotOptions options, TelegramFacade telegramFacade) {
+    public TelegramWHBot(DefaultBotOptions options, TelegramFacade telegramFacade) {
         super(options);
         this.telegramFacade = telegramFacade;
     }

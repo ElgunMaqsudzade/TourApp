@@ -1,16 +1,16 @@
 package az.code.tourapp.configs;
 
-import az.code.tourapp.TelegramBot;
+import az.code.tourapp.MessageComponent;
+import az.code.tourapp.TelegramWHBot;
 import az.code.tourapp.components.TelegramFacade;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
+import org.telegram.telegrambots.bots.TelegramWebhookBot;
 
 @Setter
 @Getter
@@ -32,27 +32,27 @@ public class BotConfig {
     }
 
     @Bean
-    public TelegramBot telegramBot(TelegramFacade telegramFacade) {
+    public TelegramWHBot telegramWHBot(TelegramFacade telegramFacade) {
         DefaultBotOptions options = new DefaultBotOptions();
         options.setProxyHost(proxy.getHost());
         options.setProxyPort(proxy.getPort());
         options.setProxyType(proxy.getType());
 
-        TelegramBot telegramBot = new TelegramBot(options, telegramFacade);
-        telegramBot.setBotUsername(username);
-        telegramBot.setBotToken(token);
-        telegramBot.setBotPath(path);
+        TelegramWHBot telegramWHBot = new TelegramWHBot(options, telegramFacade);
+        telegramWHBot.setBotUsername(username);
+        telegramWHBot.setBotToken(token);
+        telegramWHBot.setBotPath(path);
 
-        return telegramBot;
+        return telegramWHBot;
     }
-
     @Bean
-    public MessageSource messageSource() {
-        ReloadableResourceBundleMessageSource messageSource
-                = new ReloadableResourceBundleMessageSource();
+    public MessageComponent messageComponent() {
+        MessageComponent component = new MessageComponent();
+        component.setBotUsername(username);
+        component.setBotToken(token);
+        component.setBotPath(path);
 
-        messageSource.setBasename("classpath:messages");
-        messageSource.setDefaultEncoding("UTF-8");
-        return messageSource;
+        return component;
     }
+
 }
