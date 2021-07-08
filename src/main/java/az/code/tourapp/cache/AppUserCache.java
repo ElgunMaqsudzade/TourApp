@@ -10,7 +10,11 @@ public interface AppUserCache {
 
     void setAppUserBotState(Long userId, BotState botState);
 
-    String getAppUserBotState(Long userId);
+    void removeAppUser(Long userId);
+
+    String getBotState(Long userId);
+
+    String getMainState(Long userId);
 
     boolean existsById(Long userId);
 

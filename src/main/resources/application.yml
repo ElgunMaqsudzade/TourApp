@@ -10,11 +10,11 @@ spring:
 
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://72864653ba58.ngrok.io
+  path: https://58f2a3693a0e.ngrok.io
   token: 1638447550:AAGL3wR5YBy3juayAx7borJc8XTrDDBX8G4
   proxy:
     type: no_proxy
-  lang: 'en-EN'
+  lang: 'ENG'
   message-source: Replies
 
 

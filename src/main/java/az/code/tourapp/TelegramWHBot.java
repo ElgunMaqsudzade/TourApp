@@ -31,4 +31,12 @@ public class TelegramWHBot extends TelegramWebhookBot {
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         return telegramFacade.handleUpdate(update);
     }
+
+    public void sendMessage(Long chatId, String text) {
+        try {
+            execute(SendMessage.builder().chatId(String.valueOf(chatId)).text(text).build());
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
+    }
 }

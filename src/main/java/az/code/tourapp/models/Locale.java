@@ -17,7 +17,5 @@ public class Locale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String locale;
-    @OneToMany(mappedBy = "locale", cascade = CascadeType.ALL)
-    private List<Reply> replyList;
+    private String lang;
 }

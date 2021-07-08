@@ -1,22 +1,23 @@
 package az.code.tourapp.models;
 
+import az.code.tourapp.dtos.InputType;
 import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
-@Entity(name = "replies")
+@Entity
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reply {
+public class ActionInput {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String message;
-    @ManyToOne(fetch = FetchType.EAGER)
-    private BotState state;
+    private String text;
     @ManyToOne
     private Locale locale;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Action action;
 }

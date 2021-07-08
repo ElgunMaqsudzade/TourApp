@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 @Getter
-public class NotFound extends RuntimeException {
+public class Error extends RuntimeException {
+    private final Long chatId;
 
-    public NotFound(String message) {
+    public Error(String message, Long chatId) {
         super(message);
+        this.chatId = chatId;
     }
 }

@@ -5,7 +5,6 @@ import az.code.tourapp.exceptions.NotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.HashMap;
@@ -19,9 +18,9 @@ public class BotStateContext {
     private final Map<String, InputMessageHandler> messageHandlers = new HashMap<>();
 
     public BotStateContext(List<InputMessageHandler> messageHandlers) {
-
         messageHandlers.forEach(handler -> this.messageHandlers.put(handler.getMainState(), handler));
     }
+
 
     public BotApiMethod<?> processInputMessage(String mainState, Message message) {
         InputMessageHandler messageHandler = messageHandlers.get(mainState);
@@ -30,6 +29,8 @@ public class BotStateContext {
 
         return messageHandler.handle(message);
     }
+
+
 }
 
 
