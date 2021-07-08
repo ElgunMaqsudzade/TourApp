@@ -15,14 +15,6 @@ public class MessageComponent {
         this.botConfig = botConfig;
     }
 
-    public SendMessage staticReplyMessage(long chatId, String message, Locale locale) {
-        ResourceBundle resourceBundle = locale != null
-                ? ResourceBundle.getBundle(botConfig.getMessageSource(), locale)
-                : ResourceBundle.getBundle(botConfig.getMessageSource());
-
-        return new SendMessage(String.valueOf(chatId), resourceBundle.getString(message));
-    }
-
     public SendMessage replyMessage(long chatId, String message) {
         return new SendMessage(String.valueOf(chatId), message);
     }

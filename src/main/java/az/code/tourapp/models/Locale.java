@@ -6,18 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.UUID;
+import java.util.List;
 
 @Data
 @Entity
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppUser {
+public class Locale {
     @Id
-    private long userId;
-    private long chatId;
-    @OneToOne
-    private Locale locale;
-    private final String uuid = UUID.randomUUID().toString();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String lang;
 }
