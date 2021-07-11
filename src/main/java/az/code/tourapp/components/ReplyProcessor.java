@@ -12,6 +12,7 @@ import az.code.tourapp.enums.BasicState;
 import az.code.tourapp.enums.InputType;
 import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.models.*;
+import az.code.tourapp.services.AppUserCacheService;
 import az.code.tourapp.utils.CalendarUtil;
 import az.code.tourapp.utils.KeyboardContext;
 import org.joda.time.LocalDate;
@@ -33,13 +34,13 @@ public class ReplyProcessor {
     ActionDAO actionDAO;
     AppUserDAO appUserDAO;
     KeyboardContext context;
-    AppUserCache cache;
+    AppUserCacheService cache;
     @Autowired
     SendMessageComponent sender;
 
     private final List<String> IGNORE;
 
-    public ReplyProcessor(ReplyDAO replyDAO, ActionDAO actionDAO, AppUserDAO appUserDAO, KeyboardContext context, AppUserCache appUserCache, BotConfig config) {
+    public ReplyProcessor(ReplyDAO replyDAO, ActionDAO actionDAO, AppUserDAO appUserDAO, KeyboardContext context, AppUserCacheService appUserCache, BotConfig config) {
         this.replyDAO = replyDAO;
         this.actionDAO = actionDAO;
         this.appUserDAO = appUserDAO;

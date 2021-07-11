@@ -1,41 +1,25 @@
 package az.code.tourapp.components;
 
 
-import az.code.tourapp.cache.AppUserCache;
-import az.code.tourapp.cache.AppUserCacheImpl;
+
 import az.code.tourapp.components.statehandlers.CallBackHandler;
 import az.code.tourapp.configs.BotConfig;
-import az.code.tourapp.daos.interfaces.ActionDAO;
 import az.code.tourapp.daos.interfaces.AppUserDAO;
-import az.code.tourapp.daos.interfaces.ReplyDAO;
-import az.code.tourapp.enums.BasicCache;
 import az.code.tourapp.enums.BasicState;
 import az.code.tourapp.exceptions.Error;
-import az.code.tourapp.jobs.SendMessageJob;
-import az.code.tourapp.models.Action;
-import az.code.tourapp.models.AppUser;
-import az.code.tourapp.models.Reply;
+import az.code.tourapp.services.AppUserCacheService;
 import az.code.tourapp.utils.EnumUtil;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.yaml.snakeyaml.util.EnumUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -51,13 +35,13 @@ public class TelegramWHBot extends TelegramWebhookBot {
     private final List<String> IGNORE;
 
 
-    AppUserCache cache;
+    AppUserCacheService cache;
     BotStateContext stateContext;
     CallBackHandler callBackHandler;
     AppUserDAO appUserDAO;
     BotConfig config;
 
-    public TelegramWHBot(AppUserCache userDataCache, BotStateContext stateContext, CallBackHandler callBackHandler, AppUserDAO appUserDAO, BotConfig config) {
+    public TelegramWHBot(AppUserCacheService userDataCache, BotStateContext stateContext, CallBackHandler callBackHandler, AppUserDAO appUserDAO, BotConfig config) {
         this.cache = userDataCache;
         this.stateContext = stateContext;
         this.callBackHandler = callBackHandler;
@@ -102,12 +86,12 @@ public class TelegramWHBot extends TelegramWebhookBot {
                 switch (state.get()) {
                     case START:
                         if (!cache.existsById(userId))
-                            cache.createUserData(userId, chatId);
+                            cache.create(userId, chatId);
                         else
                             throw new Error("You should first stop ongoing subscription -> /stop" , chatId);
                         break;
                     case STOP:
-                        cache.removeUserData(userId, chatId, cache.getLocale(userId));
+                        cache.delete(userId, chatId, cache.getLocale(userId));
                         break;
                     case IDLE:
                         return null;
