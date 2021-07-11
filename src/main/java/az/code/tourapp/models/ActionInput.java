@@ -1,6 +1,5 @@
 package az.code.tourapp.models;
 
-import az.code.tourapp.dtos.InputType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -16,8 +15,8 @@ public class ActionInput {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String text;
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Locale locale;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Action action;
 }

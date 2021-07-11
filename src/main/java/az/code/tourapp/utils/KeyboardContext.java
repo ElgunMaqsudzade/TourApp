@@ -1,7 +1,8 @@
 package az.code.tourapp.utils;
 
 import az.code.tourapp.components.interfaces.ButtonGenerator;
-import az.code.tourapp.dtos.InputType;
+import az.code.tourapp.dtos.KeyboardDTO;
+import az.code.tourapp.enums.InputType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,12 @@ public class KeyboardContext {
     }
 
 
-    public ReplyKeyboard generateKeyboard(Map<String, InputType> map) {
-        if (map.isEmpty()) return null;
+    public ReplyKeyboard generateKeyboard(List<KeyboardDTO> dtos) {
+        if (dtos.isEmpty()) return null;
 
-        InputType inputType = map.keySet().stream().map(map::get).findFirst().orElseThrow();
+        InputType inputType = dtos.stream().map(KeyboardDTO::getInputType).findFirst().orElseThrow();
 
-        Map<String, String> buttonMap = map.keySet().stream().collect(Collectors.toMap(Function.identity(), Function.identity()));
+        Map<String, String> buttonMap = dtos.stream().collect(Collectors.toMap(KeyboardDTO::getText, KeyboardDTO::getText));
 
         return (ReplyKeyboard) buttonGenerator.get(inputType).generateButtons(buttonMap);
     }

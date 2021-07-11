@@ -1,22 +1,17 @@
 package az.code.tourapp.dtos;
 
-
+import az.code.tourapp.enums.InputType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Locale;
-
-
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppUserDTO {
-    private Long id;
-    private String name;
-    private Locale lang;
-    private BotState botState;
-    private BotState mainState;
+public class KeyboardDTO {
+    private InputType inputType;
+    private String text;
+    private String callbackData;
 }
