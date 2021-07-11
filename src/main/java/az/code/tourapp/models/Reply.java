@@ -17,6 +17,6 @@ public class Reply {
     private String message;
     @ManyToOne(fetch = FetchType.EAGER)
     private BotState state;
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Locale locale;
 }

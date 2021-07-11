@@ -1,6 +1,6 @@
 package az.code.tourapp.components.interfaces;
 
-import az.code.tourapp.dtos.InputType;
+import az.code.tourapp.enums.InputType;
 
 import java.util.Map;
 

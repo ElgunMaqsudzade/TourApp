@@ -14,12 +14,9 @@ import java.util.stream.Collectors;
 
 public class CalendarUtil {
 
-    public static final String IGNORE = "ignore!@#$%^&";
-
     public static final String[] WD = {"M", "T", "W", "T", "F", "S", "S"};
 
-    public InlineKeyboardMarkup generateKeyboard(LocalDate date) {
-
+    public InlineKeyboardMarkup generateKeyboard(LocalDate date, String IGNORE) {
         if (date == null) {
             return null;
         }
@@ -44,14 +41,14 @@ public class CalendarUtil {
         int daysInMonth = firstDay.dayOfMonth().getMaximumValue();
         int rows = ((daysInMonth + shift) % 7 > 0 ? 1 : 0) + (daysInMonth + shift) / 7;
         for (int i = 0; i < rows; i++) {
-            keyboard.add(buildRow(firstDay, shift));
+            keyboard.add(buildRow(firstDay, shift, IGNORE));
             firstDay = firstDay.plusDays(7 - shift);
             shift = 0;
         }
 
         List<KeyboardButton> controlsRow = new ArrayList<>();
-        controlsRow.add(createButton("<" + date, "<"));
-        controlsRow.add(createButton(">" + date, ">"));
+        controlsRow.add(createButton("<|" + date, "<"));
+        controlsRow.add(createButton(">|" + date, ">"));
         keyboard.add(controlsRow);
 
         List<List<InlineKeyboardButton>> keyboardBtn = keyboard
@@ -64,7 +61,6 @@ public class CalendarUtil {
                                 .build())
                         .collect(Collectors.toList()))
                 .collect(Collectors.toList());
-
         return InlineKeyboardMarkup.builder().keyboard(keyboardBtn).build();
     }
 
@@ -72,7 +68,7 @@ public class CalendarUtil {
         return new KeyboardButton().setCallbackData(callBack).setText(text);
     }
 
-    private List<KeyboardButton> buildRow(LocalDate date, int shift) {
+    private List<KeyboardButton> buildRow(LocalDate date, int shift, String IGNORE) {
         List<KeyboardButton> row = new ArrayList<>();
         int day = date.getDayOfMonth();
         LocalDate callbackDate = date;

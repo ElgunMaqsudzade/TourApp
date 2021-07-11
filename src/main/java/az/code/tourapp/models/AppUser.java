@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Data
@@ -15,9 +16,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AppUser {
     @Id
+    @NotNull
     private long userId;
+    @NotNull
     private long chatId;
     @OneToOne
     private Locale locale;
-    private final String uuid = UUID.randomUUID().toString();
+    private String uuid;
 }

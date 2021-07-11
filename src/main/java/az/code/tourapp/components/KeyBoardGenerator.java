@@ -1,7 +1,7 @@
 package az.code.tourapp.components;
 
 import az.code.tourapp.components.interfaces.ButtonGenerator;
-import az.code.tourapp.dtos.InputType;
+import az.code.tourapp.enums.InputType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;

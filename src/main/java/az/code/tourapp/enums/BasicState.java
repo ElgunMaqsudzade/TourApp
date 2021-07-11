@@ -1,11 +1,12 @@
-package az.code.tourapp.dtos;
+package az.code.tourapp.enums;
 
 import lombok.Getter;
 
-@Getter
+
 public enum BasicState {
     START,
-    LOCALE,
+    ERROR,
     STOP,
+    IDLE,
     HELP;
 }
