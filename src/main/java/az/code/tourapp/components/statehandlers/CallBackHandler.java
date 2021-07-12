@@ -1,9 +1,8 @@
 package az.code.tourapp.components.statehandlers;
 
 
-import az.code.tourapp.cache.AppUserCache;
 import az.code.tourapp.components.ReplyProcessor;
-import az.code.tourapp.components.SendMessageComponent;
+import az.code.tourapp.components.MessageSender;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.ActionDAO;
 import az.code.tourapp.daos.interfaces.ReplyDAO;
@@ -27,11 +26,11 @@ public class CallBackHandler {
     AppUserCacheService cache;
     ReplyDAO replyDAO;
     ActionDAO actionDAO;
-    SendMessageComponent sender;
+    MessageSender sender;
 
     private final List<String> IGNORE;
 
-    public CallBackHandler(ReplyProcessor replyUtil, AppUserCacheService cache, ReplyDAO replyDAO, ActionDAO actionDAO, SendMessageComponent sender,BotConfig config) {
+    public CallBackHandler(ReplyProcessor replyUtil, AppUserCacheService cache, ReplyDAO replyDAO, ActionDAO actionDAO, MessageSender sender, BotConfig config) {
         this.replyUtil = replyUtil;
         this.cache = cache;
         this.replyDAO = replyDAO;

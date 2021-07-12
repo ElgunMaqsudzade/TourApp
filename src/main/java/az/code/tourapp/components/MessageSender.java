@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -21,14 +23,14 @@ import java.io.Serializable;
 @Setter
 @Slf4j
 @Component
-public class SendMessageComponent extends TelegramWebhookBot {
+public class MessageSender extends TelegramWebhookBot {
     private String botPath;
     private String botUsername;
     private String botToken;
 
     BotConfig config;
 
-    public SendMessageComponent(BotConfig config) {
+    public MessageSender(BotConfig config) {
         this.config = config;
         this.botPath = config.getPath();
         this.botUsername = config.getUsername();
@@ -51,6 +53,13 @@ public class SendMessageComponent extends TelegramWebhookBot {
     public <T extends BotApiMethod<Serializable>> void sendEditedMessage(T message) {
         try {
             execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
+    }
+    public <T extends PartialBotApiMethod<Message>> void sendPhoto(T message) {
+        try {
+            execute((SendPhoto) message);
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
         }

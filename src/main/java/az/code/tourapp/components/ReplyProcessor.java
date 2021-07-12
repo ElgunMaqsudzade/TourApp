@@ -1,7 +1,6 @@
 package az.code.tourapp.components;
 
 
-import az.code.tourapp.cache.AppUserCache;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.ActionDAO;
 import az.code.tourapp.daos.interfaces.AppUserDAO;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
@@ -36,7 +34,7 @@ public class ReplyProcessor {
     KeyboardContext context;
     AppUserCacheService cache;
     @Autowired
-    SendMessageComponent sender;
+    MessageSender sender;
 
     private final List<String> IGNORE;
 

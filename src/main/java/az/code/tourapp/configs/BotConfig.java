@@ -1,11 +1,9 @@
 package az.code.tourapp.configs;
 
-import az.code.tourapp.components.TelegramWHBot;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 

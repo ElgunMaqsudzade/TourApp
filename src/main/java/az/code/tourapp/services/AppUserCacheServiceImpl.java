@@ -1,7 +1,7 @@
 package az.code.tourapp.services;
 
 import az.code.tourapp.cache.AppUserCache;
-import az.code.tourapp.components.SendMessageComponent;
+import az.code.tourapp.components.MessageSender;
 import az.code.tourapp.daos.interfaces.AppUserDAO;
 import az.code.tourapp.daos.interfaces.ReplyDAO;
 import az.code.tourapp.enums.BasicCache;
@@ -23,10 +23,10 @@ import java.util.UUID;
 public class AppUserCacheServiceImpl implements AppUserCacheService {
     AppUserDAO appUserDAO;
     AppUserCache cache;
-    SendMessageComponent sender;
+    MessageSender sender;
     ReplyDAO replyDAO;
 
-    public AppUserCacheServiceImpl(AppUserDAO appUserDAO, AppUserCache cache, SendMessageComponent sender, ReplyDAO replyDAO) {
+    public AppUserCacheServiceImpl(AppUserDAO appUserDAO, AppUserCache cache, MessageSender sender, ReplyDAO replyDAO) {
         this.appUserDAO = appUserDAO;
         this.cache = cache;
         this.sender = sender;

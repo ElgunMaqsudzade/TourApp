@@ -1,6 +1,7 @@
 package az.code.tourapp.components;
 
 
+import az.code.tourapp.dtos.MessageDTO;
 import az.code.tourapp.dtos.TimerInfoDTO;
 import az.code.tourapp.jobs.SendMessageJob;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,10 @@ public class SchedulerExecutor {
     }
 
 
-    public void runSendMessageJob(SendMessage sendMessage) {
-        TimerInfoDTO<SendMessage> infoDTO = new TimerInfoDTO<>();
+    public void runSendMessageJob(MessageDTO messageDTO) {
+        TimerInfoDTO<MessageDTO> infoDTO = new TimerInfoDTO<>();
         infoDTO.setTotalFireCount(1);
-        infoDTO.setCallbackData(sendMessage);
+        infoDTO.setCallbackData(messageDTO);
         scheduler.schedule(SendMessageJob.class, infoDTO);
     }
 
