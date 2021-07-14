@@ -4,13 +4,15 @@ package az.code.tourapp;
 import az.code.tourapp.components.SchedulerExecutor;
 import az.code.tourapp.components.TelegramFacade;
 import az.code.tourapp.configs.BotConfig;
-import az.code.tourapp.dtos.OfferDTO;
+import az.code.tourapp.models.Offer;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.util.Map;
 
 
 @Getter
@@ -37,7 +39,7 @@ public class TelegramWHBot extends TelegramWebhookBot {
         return telegramFacade.handleUpdate(update);
     }
 
-    public void sendMessage(OfferDTO offerDTO) {
-        sch.runSendMessageJob(offerDTO);
+    public void sendMessage(Offer offer) {
+        sch.runSendMessageJob(offer);
     }
 }

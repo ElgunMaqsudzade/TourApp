@@ -29,7 +29,7 @@ public class Scheduler{
         }
     }
 
-    public void schedule(Class<? extends Job> jobClass, TimerInfoDTO infoDTO) {
+    public <T> void schedule(Class<? extends Job> jobClass, TimerInfoDTO<T> infoDTO) {
         JobDetail jobDetail = TimerUtil.buildJobDetail(jobClass, infoDTO);
         Trigger trigger = TimerUtil.buildTrigger(jobClass, infoDTO);
 

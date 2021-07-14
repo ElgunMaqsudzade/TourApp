@@ -27,7 +27,9 @@ public interface AppUserCacheService {
 
     Map<String, String> findById(Long userId);
 
-    void update(Long userId, Map<String, String> userData);
+    void updateSub(Long userId, Map<String, String> userData);
+
+    void updateAction(Long userId, Map<String, String> userData);
 
     void create(Long userId, Long chatId);
 }

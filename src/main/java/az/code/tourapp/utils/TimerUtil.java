@@ -9,17 +9,19 @@ import java.util.Date;
 @NoArgsConstructor
 public class TimerUtil {
 
-    public static JobDetail buildJobDetail(Class<? extends Job> jobClass, TimerInfoDTO infoDTO) {
+    public static <T> JobDetail buildJobDetail(Class<? extends Job> jobClass, TimerInfoDTO<T> infoDTO) {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(jobClass.getSimpleName(), infoDTO);
 
-        return JobBuilder.newJob(jobClass)
+        return JobBuilder
+                .newJob(jobClass)
+                .ofType(jobClass)
                 .withIdentity(jobClass.getSimpleName())
                 .setJobData(jobDataMap)
                 .build();
     }
 
-    public static Trigger buildTrigger(Class<? extends Job> jobClass, TimerInfoDTO infoDTO) {
+    public static <T> Trigger buildTrigger(Class<? extends Job> jobClass, TimerInfoDTO<T> infoDTO) {
         SimpleScheduleBuilder builder = SimpleScheduleBuilder
                 .simpleSchedule()
                 .withIntervalInMilliseconds(infoDTO.getRepeatIntervalMS());

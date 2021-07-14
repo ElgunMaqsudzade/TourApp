@@ -13,6 +13,11 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+  rabbitmq:
+    template:
+      exchange: exchange
+      subscription: subscription
+      offer: offer
 
 
 
@@ -24,11 +29,12 @@ telegrambot:
     type: no_proxy
   lang: 'ENG'
   message-source: Replies
+
   ignore:
-    hard:
-      - 'ignore!@#$%^&'
+    hard: 'ignore!@#$%^&'
     save:
       - '>|'
       - '<|'
+
 
 

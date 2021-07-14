@@ -28,7 +28,15 @@ public class AppUserDAOImpl implements AppUserDAO {
     @Override
     public AppUser findById(Long id) {
         Optional<AppUser> user = appUserRepo.findById(id);
-        if(user.isEmpty()) throw new NotFound("User not found");
+        if(user.isEmpty()) throw new NotFound("User not found by id");
+
+        return user.get();
+    }
+
+    @Override
+    public AppUser findByUUID(String uuid) {
+        Optional<AppUser> user = appUserRepo.findByUuid(uuid);
+        if(user.isEmpty()) throw new NotFound("User not found by uuid");
 
         return user.get();
     }
