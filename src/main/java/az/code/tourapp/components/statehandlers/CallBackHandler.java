@@ -6,7 +6,7 @@ import az.code.tourapp.components.MessageSender;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.ActionDAO;
 import az.code.tourapp.daos.interfaces.ReplyDAO;
-import az.code.tourapp.enums.BasicState;
+import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.models.Action;
 import az.code.tourapp.models.Reply;

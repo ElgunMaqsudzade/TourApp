@@ -1,6 +1,6 @@
 package az.code.tourapp.models;
 
-import az.code.tourapp.enums.InputType;
+import az.code.tourapp.models.enums.InputType;
 import lombok.*;
 
 import javax.persistence.*;

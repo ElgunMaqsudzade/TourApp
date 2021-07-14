@@ -10,11 +10,14 @@ spring:
   redis:
     host: 'localhost'
     port: 6379
+  servlet:
+    multipart:
+      max-file-size: 10MB
 
 
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://acb09f435c03.ngrok.io
+  path: https://797859a54f3d.ngrok.io
   token: 1638447550:AAGL3wR5YBy3juayAx7borJc8XTrDDBX8G4
   proxy:
     type: no_proxy

@@ -1,6 +1,6 @@
 package az.code.tourapp.daos.interfaces;
 
-import az.code.tourapp.enums.InputType;
+import az.code.tourapp.models.enums.InputType;
 import az.code.tourapp.models.Action;
 import az.code.tourapp.models.ActionInput;
 import az.code.tourapp.models.BotState;

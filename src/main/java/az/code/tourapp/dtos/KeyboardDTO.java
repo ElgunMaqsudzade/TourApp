@@ -1,6 +1,6 @@
 package az.code.tourapp.dtos;
 
-import az.code.tourapp.enums.InputType;
+import az.code.tourapp.models.enums.InputType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

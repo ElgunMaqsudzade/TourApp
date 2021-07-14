@@ -6,14 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Set;
 
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDTO {
-    private Set<MultipartFile> files;
+public class OfferDTO {
+    private MultipartFile file;
     private String chatId;
     private String userId;
     private String message;

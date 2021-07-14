@@ -3,7 +3,7 @@ package az.code.tourapp.components.statehandlers;
 import az.code.tourapp.cache.AppUserCache;
 import az.code.tourapp.components.ReplyProcessor;
 import az.code.tourapp.components.interfaces.InputMessageHandler;
-import az.code.tourapp.enums.BasicState;
+import az.code.tourapp.models.enums.BasicState;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;

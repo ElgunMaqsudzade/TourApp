@@ -1,11 +1,10 @@
 package az.code.tourapp.components;
 
 
-import az.code.tourapp.dtos.MessageDTO;
+import az.code.tourapp.dtos.OfferDTO;
 import az.code.tourapp.dtos.TimerInfoDTO;
 import az.code.tourapp.jobs.SendMessageJob;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @Component
 public class SchedulerExecutor {
@@ -16,10 +15,10 @@ public class SchedulerExecutor {
     }
 
 
-    public void runSendMessageJob(MessageDTO messageDTO) {
-        TimerInfoDTO<MessageDTO> infoDTO = new TimerInfoDTO<>();
+    public void runSendMessageJob(OfferDTO offerDTO) {
+        TimerInfoDTO<OfferDTO> infoDTO = new TimerInfoDTO<>();
         infoDTO.setTotalFireCount(1);
-        infoDTO.setCallbackData(messageDTO);
+        infoDTO.setCallbackData(offerDTO);
         scheduler.schedule(SendMessageJob.class, infoDTO);
     }
 

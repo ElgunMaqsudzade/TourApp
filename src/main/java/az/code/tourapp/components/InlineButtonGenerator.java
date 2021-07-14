@@ -1,7 +1,7 @@
 package az.code.tourapp.components;
 
 import az.code.tourapp.components.interfaces.ButtonGenerator;
-import az.code.tourapp.enums.InputType;
+import az.code.tourapp.models.enums.InputType;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;

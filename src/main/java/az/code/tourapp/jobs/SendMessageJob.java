@@ -1,23 +1,27 @@
 package az.code.tourapp.jobs;
 
 import az.code.tourapp.components.MessageSender;
-import az.code.tourapp.dtos.MessageDTO;
+import az.code.tourapp.dtos.OfferDTO;
 import az.code.tourapp.dtos.TimerInfoDTO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.MessageEntity;
+import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
+import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 
+import java.io.BufferedInputStream;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -28,30 +32,54 @@ public class SendMessageJob implements Job {
         this.bot = sendMessage;
     }
 
-    @SneakyThrows
+
     @Override
     public void execute(JobExecutionContext ctx) throws JobExecutionException {
-        TimerInfoDTO<MessageDTO> infoDTO = (TimerInfoDTO<MessageDTO>) ctx.getJobDetail().getJobDataMap().get(this.getClass().getSimpleName());
-        MessageDTO message = infoDTO.getCallbackData();
+        TimerInfoDTO<OfferDTO> infoDTO = (TimerInfoDTO<OfferDTO>) ctx.getJobDetail().getJobDataMap().get(this.getClass().getSimpleName());
+        OfferDTO message = infoDTO.getCallbackData();
         String chatId = message.getChatId();
         String text = message.getMessage();
+        MultipartFile file = message.getFile();
 
-        Set<MultipartFile> files = message.getFiles();
-        files
-                .stream()
-                .parallel()
-                .forEach(i -> bot.sendPhoto(SendPhoto.builder().photo(new InputFile()).photo(convertFile(i)).chatId(chatId).build()));
+        bot.sendPhoto(SendPhoto
+                .builder()
+                .chatId(chatId)
+                .caption(text)
+                .parseMode(ParseMode.HTML)
+                .photo(getPhoto(file))
+                .build());
+    }
 
-        bot.sendMessage(SendMessage.builder().chatId(chatId).text(text).build());
+
+    @SneakyThrows
+    private InputFile getPhoto(MultipartFile f) {
+        System.out.println(f.getInputStream());
+        return new InputFile(f.getInputStream(), f.getOriginalFilename());
+    }
+
+    private MessageEntity getCaption(String text) {
+        return MessageEntity.builder().text(text).type("bold").length(4).offset(21).build();
     }
 
     @SneakyThrows
-    public InputFile convertFile(MultipartFile f) {
+    private Collection<? extends InputMedia> getMediaList(Set<MultipartFile> files, String text) {
 
-        return new InputFile(f.getOriginalFilename(),
-                f.getName(),
-                f.getResource().getFile(),
-                f.getInputStream(),
-                true);
+        List<InputMedia> photos = files
+                .stream()
+                .map(f -> getMedia(f, text))
+                .collect(Collectors.toList());
+
+        return photos;
+    }
+
+    @SneakyThrows
+    private InputMedia getMedia(MultipartFile f, String text) {
+        return InputMediaPhoto.builder()
+                .media(f.getContentType())
+                .mediaName(f.getOriginalFilename())
+                .caption(text)
+                .newMediaStream(f.getInputStream())
+                .isNewMedia(true)
+                .build();
     }
 }

@@ -1,6 +1,4 @@
-package az.code.tourapp.enums;
-
-import lombok.Getter;
+package az.code.tourapp.models.enums;
 
 
 public enum BasicState {

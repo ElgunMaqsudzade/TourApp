@@ -2,19 +2,17 @@ package az.code.tourapp.controllers;
 
 import az.code.tourapp.components.MessageSender;
 import az.code.tourapp.TelegramWHBot;
-import az.code.tourapp.dtos.MessageDTO;
+import az.code.tourapp.dtos.OfferDTO;
 import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.exceptions.NotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -52,8 +50,8 @@ public class WebHookController {
     }
 
     @RequestMapping(value = "/api/v1/send", method = RequestMethod.POST)
-    public ResponseEntity<String> sendMessage(@Valid @ModelAttribute MessageDTO messageDTO) {
-        telegramWHBot.sendMessage(messageDTO);
+    public ResponseEntity<String> sendMessage(@Valid @ModelAttribute OfferDTO offerDTO) {
+        telegramWHBot.sendMessage(offerDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
