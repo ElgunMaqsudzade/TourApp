@@ -2,7 +2,6 @@ package az.code.tourapp.components;
 
 import az.code.tourapp.components.statehandlers.CallBackHandler;
 import az.code.tourapp.configs.BotConfig;
-import az.code.tourapp.daos.interfaces.AppUserDAO;
 import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.services.AppUserCacheService;
@@ -14,26 +13,24 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
 import java.util.Optional;
 
 
 @Slf4j
 @Component
 public class TelegramFacade {
-    AppUserCacheService cache;
-    BotStateContext stateContext;
-    CallBackHandler callBackHandler;
-    AppUserDAO appUserDAO;
+    private final AppUserCacheService cache;
+    private final BotStateContext stateContext;
+    private final CallBackHandler callBackHandler;
+    private final SchedulerExecutor sch;
 
-    private final List<String> IGNORE;
+    private final String IGNORE;
 
-
-    public TelegramFacade(AppUserCacheService cache, BotStateContext stateContext, CallBackHandler callBackHandler, AppUserDAO appUserDAO, BotConfig config) {
+    public TelegramFacade(AppUserCacheService cache, BotStateContext stateContext, CallBackHandler callBackHandler, SchedulerExecutor sch, BotConfig config) {
         this.cache = cache;
         this.stateContext = stateContext;
         this.callBackHandler = callBackHandler;
-        this.appUserDAO = appUserDAO;
+        this.sch = sch;
         this.IGNORE = config.getIgnore().getHard();
     }
 
@@ -62,40 +59,43 @@ public class TelegramFacade {
         String inputMsg = message.getText();
         long userId = message.getFrom().getId();
         long chatId = message.getChatId();
-        if (IGNORE.stream().parallel().anyMatch(inputMsg::contains)) {
+        if (IGNORE.equals(inputMsg)) {
             return null;
         }
         if (message.isCommand()) {
-            Optional<BasicState> state = EnumUtil.commandToEnum(inputMsg, BasicState.class);
-            if (state.isPresent()) {
-                switch (state.get()) {
-                    case START:
-                        if (!cache.existsById(userId))
-                            cache.create(userId, chatId);
-                        else
-                            throw new Error("You should first stop ongoing subscription -> /stop", chatId);
-                        break;
-                    case STOP:
-                        cache.delete(userId, chatId, cache.getLocale(userId));
-                        break;
-                    case IDLE:
-                        return null;
-                }
-            } else {
-                if (appUserDAO.existsCommand(inputMsg))
-                    cache.setState(userId, appUserDAO.getStateByCommand(inputMsg).getState());
-                else
-                    throw new Error("Command not found  ->  " + inputMsg, chatId);
-            }
-        } else {
-            Optional<BasicState> state = EnumUtil.valueOf(cache.getBotState(userId), BasicState.class);
-            if (state.isPresent()) {
-                if (state.get().equals(BasicState.IDLE)) {
+            handleCommand(chatId, userId, inputMsg);
+        }
+        Optional<BasicState> state = EnumUtil.valueOf(cache.getBotState(userId), BasicState.class);
+        if (state.isPresent()) {
+            switch (state.get()) {
+                case IDLE:
                     return null;
-                }
+                case SUBSCRIPTION_END:
+                    sch.runSubscribeJob(userId);
             }
         }
 
         return cache.existsById(userId) ? stateContext.processInputMessage(cache.getMainState(userId), message) : null;
+    }
+
+    private void handleCommand(Long chatId, Long userId, String inputMsg) {
+        Optional<BasicState> state = EnumUtil.commandToEnum(inputMsg, BasicState.class);
+        if (state.isPresent()) {
+            switch (state.get()) {
+                case START:
+                    if (!cache.existsById(userId))
+                        cache.create(userId, chatId);
+                    else
+                        throw new Error("You should first stop ongoing subscription -> /stop", chatId);
+                    break;
+                case STOP:
+                    cache.delete(userId, chatId, cache.getLocale(userId));
+                    break;
+            }
+        }
+//        if (appUserDAO.existsCommand(inputMsg))
+//            cache.setState(userId, appUserDAO.getStateByCommand(inputMsg).getState());
+//        else
+//            throw new Error("Command not found  ->  " + inputMsg, chatId);
     }
 }

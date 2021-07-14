@@ -31,6 +31,6 @@ public class BotConfig {
     @Data
     public static class IgnoreProps {
         private List<String> save;
-        private List<String> hard;
+        private String hard;
     }
 }

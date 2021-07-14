@@ -1,6 +1,6 @@
 package az.code.tourapp.services;
 
-import az.code.tourapp.cache.AppUserCache;
+import az.code.tourapp.cache.interfaces.SubscriptionCache;
 import az.code.tourapp.components.MessageSender;
 import az.code.tourapp.daos.interfaces.AppUserDAO;
 import az.code.tourapp.daos.interfaces.ReplyDAO;
@@ -22,11 +22,11 @@ import java.util.UUID;
 @Service
 public class AppUserCacheServiceImpl implements AppUserCacheService {
     AppUserDAO appUserDAO;
-    AppUserCache cache;
+    SubscriptionCache cache;
     MessageSender sender;
     ReplyDAO replyDAO;
 
-    public AppUserCacheServiceImpl(AppUserDAO appUserDAO, AppUserCache cache, MessageSender sender, ReplyDAO replyDAO) {
+    public AppUserCacheServiceImpl(AppUserDAO appUserDAO, SubscriptionCache cache, MessageSender sender, ReplyDAO replyDAO) {
         this.appUserDAO = appUserDAO;
         this.cache = cache;
         this.sender = sender;
@@ -65,21 +65,23 @@ public class AppUserCacheServiceImpl implements AppUserCacheService {
     public void setState(Long userId, String state) {
         Map<String, String> user = findById(userId);
         user.put(BasicCache.STATE.toString(), state);
-        update(userId, user);
+        updateAction(userId, user);
     }
 
     @Override
     public void setMainState(Long userId, BasicState mainState) {
         Map<String, String> user = findById(userId);
         user.put(BasicCache.MAIN_STATE.toString(), mainState.toString());
-        update(userId, user);
+        updateAction(userId, user);
     }
 
     @Override
     public void setLocale(Long userId, String locale) {
         Map<String, String> user = findById(userId);
-        user.put(BasicCache.LOCALE.toString(), locale);
-        update(userId, user);
+        Map<String, String> cacheData = findById(userId);
+        user.put(BasicCache.language.toString(), locale);
+        updateAction(userId, user);
+        updateSub(userId, user);
         AppUser appUser = appUserDAO.findById(userId);
         appUserDAO.save(appUser.toBuilder().locale(appUserDAO.findLang(locale)).build());
     }
@@ -95,7 +97,7 @@ public class AppUserCacheServiceImpl implements AppUserCacheService {
 
     @Override
     public String getLocale(Long userId) {
-        return findById(userId).get(BasicCache.LOCALE.toString());
+        return findById(userId).get(BasicCache.language.toString());
     }
 
     @Override
@@ -126,22 +128,29 @@ public class AppUserCacheServiceImpl implements AppUserCacheService {
     }
 
     @Override
-    public void update(Long userId, Map<String, String> userData) {
-        cache.save(userId, userData);
+    public void updateSub(Long userId, Map<String, String> userData) {
+        cache.saveSub(userId, userData);
+    }
+
+    @Override
+    public void updateAction(Long userId, Map<String, String> userData) {
+        cache.saveSub(userId, userData);
     }
 
     @Override
     public void create(Long userId, Long chatId) {
+        Map<String, String> actionMap = new HashMap<>();
         Map<String, String> dataMap = new HashMap<>();
-        dataMap.put(BasicCache.STATE.toString(), BasicState.START.toString());
-        dataMap.put(BasicCache.MAIN_STATE.toString(), BasicState.START.toString());
+        actionMap.put(BasicCache.STATE.toString(), BasicState.START.toString());
+        actionMap.put(BasicCache.MAIN_STATE.toString(), BasicState.START.toString());
         if (appUserDAO.existsById(userId)) {
             AppUser user = appUserDAO.findById(userId);
-            dataMap.put(BasicCache.LOCALE.toString(), user.getLocale().getLang());
+            dataMap.put(BasicCache.language.toString(), user.getLocale().getLang());
             appUserDAO.save(user.toBuilder().uuid(UUID.randomUUID().toString()).build());
         } else {
             appUserDAO.save(AppUser.builder().uuid(UUID.randomUUID().toString()).chatId(chatId).userId(userId).build());
         }
-        update(userId, dataMap);
+        updateSub(userId, dataMap);
+        updateAction(userId, actionMap);
     }
 }

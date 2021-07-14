@@ -18,7 +18,7 @@ public class BotState {
     private String state;
     private String command;
     private String regex;
-
+    private boolean isSavable;
     @OneToMany(mappedBy = "state", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Reply> replyList;
 }

@@ -1,6 +1,6 @@
 package az.code.tourapp.components.statehandlers;
 
-import az.code.tourapp.cache.AppUserCache;
+import az.code.tourapp.cache.interfaces.SubscriptionCache;
 import az.code.tourapp.components.ReplyProcessor;
 import az.code.tourapp.components.interfaces.InputMessageHandler;
 import az.code.tourapp.models.enums.BasicState;
@@ -13,10 +13,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 @Slf4j
 @Component
 public class StartStateHandler implements InputMessageHandler {
-    AppUserCache dataCache;
+    SubscriptionCache dataCache;
     ReplyProcessor replyUtil;
 
-    public StartStateHandler(AppUserCache dataCache, ReplyProcessor replyUtil) {
+    public StartStateHandler(SubscriptionCache dataCache, ReplyProcessor replyUtil) {
         this.dataCache = dataCache;
         this.replyUtil = replyUtil;
     }

@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface AppUserDAO {
     AppUser findById(Long id);
+
+    AppUser findByUUID(String uuid);
+
     boolean existsById(Long id);
 
     AppUser save(AppUser appUser);

@@ -6,5 +6,6 @@ public enum BasicState {
     ERROR,
     STOP,
     IDLE,
+    SUBSCRIPTION_END,
     HELP;
 }

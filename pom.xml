@@ -56,9 +56,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-            <version>3.6.1</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
