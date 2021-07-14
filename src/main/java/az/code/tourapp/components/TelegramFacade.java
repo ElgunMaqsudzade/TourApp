@@ -1,19 +1,14 @@
 package az.code.tourapp.components;
 
-
-
 import az.code.tourapp.components.statehandlers.CallBackHandler;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.AppUserDAO;
-import az.code.tourapp.enums.BasicState;
+import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.services.AppUserCacheService;
 import az.code.tourapp.utils.EnumUtil;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -23,37 +18,26 @@ import java.util.List;
 import java.util.Optional;
 
 
-@Getter
-@Setter
 @Slf4j
 @Component
-public class TelegramWHBot extends TelegramWebhookBot {
-    private String botPath;
-    private String botUsername;
-    private String botToken;
-
-    private final List<String> IGNORE;
-
-
+public class TelegramFacade {
     AppUserCacheService cache;
     BotStateContext stateContext;
     CallBackHandler callBackHandler;
     AppUserDAO appUserDAO;
-    BotConfig config;
 
-    public TelegramWHBot(AppUserCacheService userDataCache, BotStateContext stateContext, CallBackHandler callBackHandler, AppUserDAO appUserDAO, BotConfig config) {
-        this.cache = userDataCache;
+    private final List<String> IGNORE;
+
+
+    public TelegramFacade(AppUserCacheService cache, BotStateContext stateContext, CallBackHandler callBackHandler, AppUserDAO appUserDAO, BotConfig config) {
+        this.cache = cache;
         this.stateContext = stateContext;
         this.callBackHandler = callBackHandler;
         this.appUserDAO = appUserDAO;
-        this.botPath = config.getPath();
-        this.botUsername = config.getUsername();
-        this.botToken = config.getToken();
         this.IGNORE = config.getIgnore().getHard();
     }
 
-    @Override
-    public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+    public BotApiMethod<?> handleUpdate(Update update) {
         BotApiMethod<?> replyMessage = null;
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
@@ -73,6 +57,7 @@ public class TelegramWHBot extends TelegramWebhookBot {
         return replyMessage;
     }
 
+
     private BotApiMethod<?> handleInput(Message message) {
         String inputMsg = message.getText();
         long userId = message.getFrom().getId();
@@ -88,7 +73,7 @@ public class TelegramWHBot extends TelegramWebhookBot {
                         if (!cache.existsById(userId))
                             cache.create(userId, chatId);
                         else
-                            throw new Error("You should first stop ongoing subscription -> /stop" , chatId);
+                            throw new Error("You should first stop ongoing subscription -> /stop", chatId);
                         break;
                     case STOP:
                         cache.delete(userId, chatId, cache.getLocale(userId));

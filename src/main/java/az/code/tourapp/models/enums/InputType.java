@@ -1,4 +1,4 @@
-package az.code.tourapp.enums;
+package az.code.tourapp.models.enums;
 
 public enum InputType {
     BUTTON,

@@ -2,14 +2,13 @@ package az.code.tourapp.utils;
 
 import az.code.tourapp.components.interfaces.ButtonGenerator;
 import az.code.tourapp.dtos.KeyboardDTO;
-import az.code.tourapp.enums.InputType;
+import az.code.tourapp.models.enums.InputType;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Setter

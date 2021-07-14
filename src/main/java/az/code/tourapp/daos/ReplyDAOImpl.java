@@ -3,7 +3,6 @@ package az.code.tourapp.daos;
 import az.code.tourapp.daos.interfaces.ReplyDAO;
 import az.code.tourapp.exceptions.NotFound;
 import az.code.tourapp.models.*;
-import az.code.tourapp.repos.BotStateRepo;
 import az.code.tourapp.repos.ReplyRepo;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;

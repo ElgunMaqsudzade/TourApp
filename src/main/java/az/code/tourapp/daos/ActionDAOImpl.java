@@ -1,7 +1,7 @@
 package az.code.tourapp.daos;
 
 import az.code.tourapp.daos.interfaces.ActionDAO;
-import az.code.tourapp.enums.InputType;
+import az.code.tourapp.models.enums.InputType;
 import az.code.tourapp.models.*;
 import az.code.tourapp.repos.ActionInputRepo;
 import az.code.tourapp.repos.ActionRepo;

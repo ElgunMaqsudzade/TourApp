@@ -1,6 +1,6 @@
 package az.code.tourapp.services;
 
-import az.code.tourapp.enums.BasicState;
+import az.code.tourapp.models.enums.BasicState;
 
 import java.util.Map;
 

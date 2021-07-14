@@ -8,14 +8,17 @@ spring:
       ddl-auto: update
     open-in-view: false
   redis:
-    host: ec2-54-73-101-105.eu-west-1.compute.amazonaws.com
-    port: 7220
-    password: pfc82f367cfbba29b46d2d6633c8c8b42e51a91112c64ca5f892b31017772ba9c
+    host: 'localhost'
+    port: 6379
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
 
 
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://tourappspring.herokuapp.com
+  path: https://797859a54f3d.ngrok.io
   token: 1638447550:AAGL3wR5YBy3juayAx7borJc8XTrDDBX8G4
   proxy:
     type: no_proxy
