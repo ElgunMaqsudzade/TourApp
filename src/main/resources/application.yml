@@ -15,6 +15,7 @@ spring:
       max-file-size: 10MB
 
 
+
 telegrambot:
   username: '@MyTourAppBot'
   path: https://797859a54f3d.ngrok.io
