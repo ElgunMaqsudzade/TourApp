@@ -9,33 +9,31 @@ import java.util.Date;
 @NoArgsConstructor
 public class TimerUtil {
 
-    public static <T> JobDetail buildJobDetail(Class<? extends Job> jobClass, TimerInfoDTO<T> infoDTO) {
+    public static JobDetail buildJobDetail(Class<? extends Job> jobClass, TimerInfoDTO infoDTO) {
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(jobClass.getSimpleName(), infoDTO);
 
-        return JobBuilder
-                .newJob(jobClass)
-                .ofType(jobClass)
+        return JobBuilder.newJob(jobClass)
                 .withIdentity(jobClass.getSimpleName())
                 .setJobData(jobDataMap)
                 .build();
     }
 
-    public static <T> Trigger buildTrigger(Class<? extends Job> jobClass, TimerInfoDTO<T> infoDTO) {
+    public static Trigger buildTrigger(Class<? extends Job> jobClass, TimerInfoDTO infoDTO) {
         SimpleScheduleBuilder builder = SimpleScheduleBuilder
                 .simpleSchedule()
-                .withIntervalInMilliseconds(infoDTO.getRepeatIntervalMS());
+                .withIntervalInMilliseconds(infoDTO.getIntervalMS());
 
-        if(infoDTO.isRunForever()){
+        if(infoDTO.isForever()){
             builder = builder.repeatForever();
         }else {
-            builder = builder.withRepeatCount(infoDTO.getTotalFireCount() - 1);
+            builder = builder.withRepeatCount(infoDTO.getFireCount() - 1);
         }
 
         return TriggerBuilder.newTrigger()
                 .withIdentity(jobClass.getSimpleName())
                 .withSchedule(builder)
-                .startAt(new Date(System.currentTimeMillis() + infoDTO.getInitialOffsetMS()))
+                .startAt(new Date(System.currentTimeMillis() + infoDTO.getOffsetMS()))
                 .build();
     }
 }

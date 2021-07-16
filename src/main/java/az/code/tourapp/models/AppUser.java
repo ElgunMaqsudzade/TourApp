@@ -20,7 +20,5 @@ public class AppUser {
     private long userId;
     @NotNull
     private long chatId;
-    @OneToOne
-    private Locale locale;
     private String uuid;
 }

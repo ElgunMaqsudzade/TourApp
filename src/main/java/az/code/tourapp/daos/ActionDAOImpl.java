@@ -40,7 +40,7 @@ public class ActionDAOImpl implements ActionDAO {
     }
 
     @Override
-    public Optional<InputType> getNextActionType(String state) {
+    public Optional<InputType> getInputType(String state) {
         Specification<Action> spec = Specification.where((rt, q, cb) ->
                 cb.equal(rt.get(Action_.currentState).get(BotState_.STATE), state));
 

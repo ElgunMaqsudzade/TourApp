@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "spring.rabbitmq.template", ignoreInvalidFields = true)
 public class RabbitMQConfig {
     private String exchange;
-    private String offer = "offer";
-    private String subscription = "subscription";
+    public String offer = "offer";
+    public String subscription = "subscription";
 
     @Bean
     public Queue queueOffer() {
@@ -31,6 +31,7 @@ public class RabbitMQConfig {
     public Queue queueSub() {
         return new Queue(subscription);
     }
+
     @Bean
     public TopicExchange exchange() {
         return new TopicExchange(exchange);
@@ -40,17 +41,23 @@ public class RabbitMQConfig {
     public Binding bindingOffer() {
         return BindingBuilder.bind(queueOffer()).to(exchange()).with(offer);
     }
+
     @Bean
     public Binding bindingSubscription() {
         return BindingBuilder.bind(queueSub()).to(exchange()).with(subscription);
     }
 
     @Bean
+    public Jackson2JsonMessageConverter converter() {
+        return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
     public RabbitTemplate template(ConnectionFactory connectionFactory) {
         RabbitTemplate temp = new RabbitTemplate(connectionFactory);
         temp.setExchange(exchange);
-        temp.setRoutingKey(subscription);
-        temp.setMessageConverter(new Jackson2JsonMessageConverter());
+        temp.setRoutingKey(offer);
+        temp.setMessageConverter(converter());
         return temp;
     }
 }

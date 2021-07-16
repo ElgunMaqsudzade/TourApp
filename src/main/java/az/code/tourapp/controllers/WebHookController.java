@@ -2,12 +2,10 @@ package az.code.tourapp.controllers;
 
 import az.code.tourapp.components.MessageSender;
 import az.code.tourapp.TelegramWHBot;
-import az.code.tourapp.configs.RabbitMQConfig;
 import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.exceptions.NotFound;
 import az.code.tourapp.models.Offer;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
@@ -28,11 +26,6 @@ public class WebHookController {
     private final MessageSender sender;
     private final RabbitTemplate temp;
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> exceptionHandler(Exception ex) {
-        log.error(ex.getMessage());
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);
-    }
 
     @ExceptionHandler(Error.class)
     public ResponseEntity<String> errorHandler(Error ex) {
@@ -42,9 +35,9 @@ public class WebHookController {
     }
 
     @ExceptionHandler(NotFound.class)
-    public ResponseEntity<String> notFoundHandler(NotFound ex) {
+    public ResponseEntity<?> notFoundHandler(NotFound ex) {
         log.warn(ex.getMessage());
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)

@@ -1,4 +1,4 @@
-package az.code.tourapp.components;
+package az.code.tourapp.components.keyboards;
 
 import az.code.tourapp.components.interfaces.ButtonGenerator;
 import az.code.tourapp.models.enums.InputType;

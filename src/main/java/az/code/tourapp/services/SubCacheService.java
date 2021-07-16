@@ -1,10 +1,12 @@
 package az.code.tourapp.services;
 
+import az.code.tourapp.dtos.UserDataDTO;
+import az.code.tourapp.models.BotState;
 import az.code.tourapp.models.enums.BasicState;
 
 import java.util.Map;
 
-public interface AppUserCacheService {
+public interface SubCacheService {
     boolean saveData(Long userId, String state, String data);
 
     void setState(Long userId, String state);
@@ -15,7 +17,7 @@ public interface AppUserCacheService {
     void setLocale(Long userId, String locale);
 
 
-    String getBotState(Long userId);
+    BotState getBotState(Long userId);
 
     String getLocale(Long userId);
 
@@ -23,13 +25,15 @@ public interface AppUserCacheService {
 
     boolean existsById(Long userId);
 
-    void delete(Long userId, Long chatId, String locale);
+    boolean existsSubById(Long userId);
 
-    Map<String, String> findById(Long userId);
+    void delete(Long userId, Long chatId);
 
-    void updateSub(Long userId, Map<String, String> userData);
+    void deleteSubscription(Long userId);
 
-    void updateAction(Long userId, Map<String, String> userData);
+    UserDataDTO findById(Long userId);
+
+    void update(Long userId, UserDataDTO userData);
 
     void create(Long userId, Long chatId);
 }

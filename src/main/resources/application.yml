@@ -20,21 +20,23 @@ spring:
       offer: offer
 
 
-
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://797859a54f3d.ngrok.io
+  path: https://2cedd820e5d8.ngrok.io
   token: 1638447550:AAGL3wR5YBy3juayAx7borJc8XTrDDBX8G4
   proxy:
     type: no_proxy
   lang: 'ENG'
   message-source: Replies
-
   ignore:
     hard: 'ignore!@#$%^&'
     save:
       - '>|'
       - '<|'
+  redis:
+    subscription: telegramuserdata
+    dictionary: telegramdictionarydata
+    offer: telegramofferdata
 
 
 

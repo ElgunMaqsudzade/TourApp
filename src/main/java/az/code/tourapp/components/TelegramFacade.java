@@ -1,10 +1,9 @@
 package az.code.tourapp.components;
 
-import az.code.tourapp.components.statehandlers.CallBackHandler;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.exceptions.Error;
-import az.code.tourapp.services.AppUserCacheService;
+import az.code.tourapp.services.SubCacheService;
 import az.code.tourapp.utils.EnumUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,18 +18,16 @@ import java.util.Optional;
 @Slf4j
 @Component
 public class TelegramFacade {
-    private final AppUserCacheService cache;
+    private final SubCacheService cache;
     private final BotStateContext stateContext;
-    private final CallBackHandler callBackHandler;
-    private final SchedulerExecutor sch;
+    private final MessageSender sender;
 
     private final String IGNORE;
 
-    public TelegramFacade(AppUserCacheService cache, BotStateContext stateContext, CallBackHandler callBackHandler, SchedulerExecutor sch, BotConfig config) {
+    public TelegramFacade(MessageSender sender, SubCacheService cache, BotStateContext stateContext, BotConfig config) {
         this.cache = cache;
+        this.sender = sender;
         this.stateContext = stateContext;
-        this.callBackHandler = callBackHandler;
-        this.sch = sch;
         this.IGNORE = config.getIgnore().getHard();
     }
 
@@ -41,7 +38,7 @@ public class TelegramFacade {
             log.info("New callbackQuery from User: {}, userId: {}, with data: {}",
                     update.getCallbackQuery().getFrom().getFirstName(),
                     callbackQuery.getFrom().getId(), update.getCallbackQuery().getData());
-            return callBackHandler.processQuery(callbackQuery);
+            return handleCallBack(callbackQuery);
         }
 
 
@@ -63,39 +60,33 @@ public class TelegramFacade {
             return null;
         }
         if (message.isCommand()) {
-            handleCommand(chatId, userId, inputMsg);
-        }
-        Optional<BasicState> state = EnumUtil.valueOf(cache.getBotState(userId), BasicState.class);
-        if (state.isPresent()) {
-            switch (state.get()) {
-                case IDLE:
-                    return null;
-                case SUBSCRIPTION_END:
-                    sch.runSubscribeJob(userId);
+            Optional<BasicState> state = EnumUtil.commandToEnum(inputMsg, BasicState.class);
+            if (state.isPresent()) {
+                switch (state.get()) {
+                    case START:
+                        if (!cache.existsById(userId))
+                            cache.create(userId, chatId);
+                        else
+                            throw new Error("You should first stop ongoing subscription -> /stop", chatId);
+                        break;
+                    case STOP:
+                        if (cache.existsById(userId)) {
+                            cache.delete(userId, chatId);
+                        }
+                        return null;
+                }
             }
         }
-
         return cache.existsById(userId) ? stateContext.processInputMessage(cache.getMainState(userId), message) : null;
     }
 
-    private void handleCommand(Long chatId, Long userId, String inputMsg) {
-        Optional<BasicState> state = EnumUtil.commandToEnum(inputMsg, BasicState.class);
-        if (state.isPresent()) {
-            switch (state.get()) {
-                case START:
-                    if (!cache.existsById(userId))
-                        cache.create(userId, chatId);
-                    else
-                        throw new Error("You should first stop ongoing subscription -> /stop", chatId);
-                    break;
-                case STOP:
-                    cache.delete(userId, chatId, cache.getLocale(userId));
-                    break;
-            }
+    private BotApiMethod<?> handleCallBack(CallbackQuery query) {
+        long userId = query.getFrom().getId();
+        String inputMsg = query.getData();
+        if (IGNORE.equals(inputMsg)) {
+            return null;
         }
-//        if (appUserDAO.existsCommand(inputMsg))
-//            cache.setState(userId, appUserDAO.getStateByCommand(inputMsg).getState());
-//        else
-//            throw new Error("Command not found  ->  " + inputMsg, chatId);
+
+        return cache.existsById(userId) ? stateContext.processCallBack(cache.getMainState(userId), query) : null;
     }
 }
