@@ -1,4 +1,4 @@
-package az.code.tourapp.components;
+package az.code.tourapp.components.keyboards;
 
 import az.code.tourapp.components.interfaces.ButtonGenerator;
 import az.code.tourapp.models.enums.InputType;
@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 @Setter
 @Component
 public class KeyBoardGenerator implements ButtonGenerator<ReplyKeyboardMarkup> {
-    private boolean selective;
-    private boolean onetime;
-    private boolean resize;
-    private Integer maxColumn;
+    private boolean selective = true;
+    private boolean onetime = true;
+    private boolean resize = true;
+    private Integer maxColumn = 3;
 
 
     @Override

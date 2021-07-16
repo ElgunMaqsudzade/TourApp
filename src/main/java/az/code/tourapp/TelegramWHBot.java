@@ -4,9 +4,11 @@ package az.code.tourapp;
 import az.code.tourapp.components.SchedulerExecutor;
 import az.code.tourapp.components.TelegramFacade;
 import az.code.tourapp.configs.BotConfig;
+import az.code.tourapp.configs.RabbitMQConfig;
 import az.code.tourapp.models.Offer;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -39,7 +41,8 @@ public class TelegramWHBot extends TelegramWebhookBot {
         return telegramFacade.handleUpdate(update);
     }
 
+    @RabbitListener(queues = "offer")
     public void sendMessage(Offer offer) {
-        sch.runSendMessageJob(offer);
+        sch.runHandleOfferJob(offer);
     }
 }

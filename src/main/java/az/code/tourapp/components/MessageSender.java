@@ -53,7 +53,7 @@ public class MessageSender extends TelegramWebhookBot {
         }
     }
 
-    public <T extends BotApiMethod<Serializable>> void sendEditedMessage(T message) {
+    private  <T extends BotApiMethod<Serializable>> void sendEditedMessage(T message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {

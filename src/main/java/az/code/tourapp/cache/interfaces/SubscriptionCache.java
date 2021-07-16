@@ -1,8 +1,7 @@
 package az.code.tourapp.cache.interfaces;
 
 
-
-import java.util.Map;
+import az.code.tourapp.dtos.UserDataDTO;
 
 
 public interface SubscriptionCache {
@@ -11,9 +10,7 @@ public interface SubscriptionCache {
 
     void delete(Long userId);
 
-    Map<String, String> findById(Long userId);
+    UserDataDTO findById(Long userId);
 
-    void saveSub(Long userId, Map<String, String> userData);
-
-    void saveAction(Long userId, Map<String, String> userData);
+    void save(Long userId, UserDataDTO userData);
 }

@@ -1,10 +1,11 @@
 package az.code.tourapp.components;
 
-import az.code.tourapp.components.interfaces.InputMessageHandler;
+import az.code.tourapp.components.interfaces.StateHandler;
 import az.code.tourapp.exceptions.NotFound;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
 import java.util.HashMap;
@@ -15,22 +16,28 @@ import java.util.Map;
 @Component
 @Slf4j
 public class BotStateContext {
-    private final Map<String, InputMessageHandler> messageHandlers = new HashMap<>();
+    private final Map<String, StateHandler> messageHandlers = new HashMap<>();
 
-    public BotStateContext(List<InputMessageHandler> messageHandlers) {
-        messageHandlers.forEach(handler -> this.messageHandlers.put(handler.getMainState(), handler));
+    public BotStateContext(List<StateHandler> mHandlers) {
+        mHandlers.forEach(handler -> this.messageHandlers.put(handler.getMainState(), handler));
     }
 
 
     public BotApiMethod<?> processInputMessage(String mainState, Message message) {
-        InputMessageHandler messageHandler = messageHandlers.get(mainState);
+        StateHandler stateHandler = messageHandlers.get(mainState);
 
-        if (messageHandler == null) throw new NotFound("Handler for state not found");
+        if (stateHandler == null) throw new NotFound("Message Handler for state not found");
 
-        return messageHandler.handle(message);
+        return stateHandler.handleMessage(message);
     }
 
+    public BotApiMethod<?> processCallBack(String mainState, CallbackQuery query) {
+        StateHandler stateHandler = messageHandlers.get(mainState);
 
+        if (stateHandler == null) throw new NotFound("Callback Handler for state not found");
+
+        return stateHandler.handleCallBack(query);
+    }
 }
 
 

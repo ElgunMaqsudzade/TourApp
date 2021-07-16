@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
@@ -19,18 +20,20 @@ import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class SendMessageJob implements Job {
+public class SendOfferJob implements Job {
     MessageSender bot;
     AppUserDAO appUserDAO;
 
-    public SendMessageJob(MessageSender bot, AppUserDAO appUserDAO) {
+    public SendOfferJob(MessageSender bot, AppUserDAO appUserDAO) {
         this.bot = bot;
         this.appUserDAO = appUserDAO;
     }
@@ -38,26 +41,25 @@ public class SendMessageJob implements Job {
     @Override
     public void execute(JobExecutionContext ctx) throws JobExecutionException {
         TimerInfoDTO<Offer> infoDTO = (TimerInfoDTO<Offer>) ctx.getJobDetail().getJobDataMap().get(this.getClass().getSimpleName());
-        Offer message = infoDTO.getCallbackData();
-        AppUser user = appUserDAO.findByUUID(message.getUUID());
+        Offer offer = infoDTO.getData();
+        AppUser user = appUserDAO.findByUUID(offer.getUUID());
         Long chatId = user.getChatId();
-        String text = message.getMessage();
-//        MultipartFile file = message.getFile();
-//
-//        bot.sendPhoto(SendPhoto
-//                .builder()
-//                .chatId(String.valueOf(chatId))
-//                .caption(text)
-//                .parseMode(ParseMode.HTML)
-//                .photo(getPhoto(file))
-//                .build());
+        String text = offer.getMessage();
+
+        ByteArrayResource resource = new ByteArrayResource(offer.getFileAsBytes());
+        bot.sendPhoto(SendPhoto
+                .builder()
+                .chatId(String.valueOf(chatId))
+                .caption(text)
+                .parseMode(ParseMode.HTML)
+                .photo(getPhoto(resource))
+                .build());
     }
 
 
     @SneakyThrows
-    private InputFile getPhoto(MultipartFile f) {
-        System.out.println(f.getInputStream());
-        return new InputFile(f.getInputStream(), f.getOriginalFilename());
+    private InputFile getPhoto(ByteArrayResource r) {
+        return new InputFile(r.getInputStream(), UUID.randomUUID().toString());
     }
 
     private MessageEntity getCaption(String text) {

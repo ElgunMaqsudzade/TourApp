@@ -5,14 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class TimerInfoDTO<T> {
-    private int fireCount;
-    private boolean forever;
-    private long intervalMS;
-    private long offsetMS;
-    private T data;
+public class OfferCacheDTO implements Serializable {
+    private boolean locked;
+    private int offerCount;
 }

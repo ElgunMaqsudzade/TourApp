@@ -1,22 +1,49 @@
-package az.code.tourapp.utils;
+package az.code.tourapp.components.keyboards;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import az.code.tourapp.components.interfaces.ButtonGenerator;
+import az.code.tourapp.configs.BotConfig;
+import az.code.tourapp.models.enums.InputType;
 import com.tbot.calendar.model.KeyboardButton;
 import org.joda.time.LocalDate;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class CalendarUtil {
-
+@Component
+public class DateKeyboardGenerator implements ButtonGenerator<InlineKeyboardMarkup> {
     public static final String[] WD = {"M", "T", "W", "T", "F", "S", "S"};
 
-    public InlineKeyboardMarkup generateKeyboard(LocalDate date, String IGNORE) {
+    private final String IGNORE;
+    private final List<String> ignores;
+
+    public DateKeyboardGenerator(BotConfig config) {
+        this.IGNORE = config.getIgnore().getHard();
+        this.ignores = config.getIgnore().getSave();
+    }
+
+    @Override
+    public InlineKeyboardMarkup generateButtons(Map<String, String> data) {
+        InlineKeyboardMarkup keyboardMarkup = null;
+        String usersAnswer = data.keySet().stream().findFirst().get();
+        if (ignores.stream().anyMatch(usersAnswer::contains)) {
+            if (usersAnswer.contains(ignores.get(0)))
+                keyboardMarkup = generateKeyboard(LocalDate.parse(usersAnswer.substring(2)).plusDays(30));
+            else if (usersAnswer.contains(ignores.get(1))) {
+                keyboardMarkup = generateKeyboard(LocalDate.parse(usersAnswer.substring(2)).minusDays(30));
+            }
+        } else {
+            keyboardMarkup = generateKeyboard(LocalDate.now());
+        }
+        return keyboardMarkup;
+    }
+
+    public InlineKeyboardMarkup generateKeyboard(LocalDate date) {
         if (date == null) {
             return null;
         }
@@ -85,5 +112,9 @@ public class CalendarUtil {
         }
         return row;
     }
-}
 
+    @Override
+    public InputType getMainType() {
+        return InputType.DATE;
+    }
+}

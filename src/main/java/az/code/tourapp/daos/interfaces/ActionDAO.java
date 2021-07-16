@@ -12,7 +12,7 @@ public interface ActionDAO {
 
     Optional<Action> getAction(String currentState, String staticText, String locale);
 
-    Optional<InputType> getNextActionType(String nextState);
+    Optional<InputType> getInputType(String state);
 
     Optional<BotState> getNextActionState(String state);
 
