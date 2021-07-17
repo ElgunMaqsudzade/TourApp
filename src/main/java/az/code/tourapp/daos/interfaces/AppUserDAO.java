@@ -9,7 +9,10 @@ import java.util.List;
 public interface AppUserDAO {
     AppUser findById(Long id);
 
+    List<AppUser> findAll();
+
     AppUser findByUUID(String uuid);
+
 
     boolean existsById(Long id);
 

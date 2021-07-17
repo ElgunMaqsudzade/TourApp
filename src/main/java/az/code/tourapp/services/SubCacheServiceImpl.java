@@ -11,6 +11,7 @@ import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.exceptions.NotFound;
 import az.code.tourapp.models.AppUser;
 import az.code.tourapp.models.enums.InputType;
+import az.code.tourapp.services.interfaces.MessageService;
 import az.code.tourapp.services.interfaces.SubCacheService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -120,7 +121,7 @@ public class SubCacheServiceImpl implements SubCacheService {
     @Override
     public void delete(Long userId, Long chatId) {
         sender.sendMessage(SendMessage.builder().chatId(String.valueOf(chatId))
-                .text(dCache.getReply(BasicState.STOP.toString(), getLocale(userId)).getMessage()).build());
+                .text(dCache.getReply(userId).getMessage()).build());
         cache.delete(userId);
     }
 

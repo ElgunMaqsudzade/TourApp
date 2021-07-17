@@ -68,20 +68,21 @@ public class TelegramFacade {
         if (message.isCommand()) {
             Optional<BasicState> state = EnumUtil.commandToEnum(inputMsg, BasicState.class);
             if (state.isPresent()) {
-                switch (state.get()) {
-                    case START:
-                        if (!cache.existsById(userId))
-                            cache.create(userId, chatId);
-                        else
-                            throw new Error("You should first stop ongoing subscription -> /stop", chatId);
-                        break;
-                    case STOP:
-                        if (cache.existsById(userId)) {
+                if (state.get().equals(BasicState.START)) {
+                    if (!cache.existsById(userId))
+                        cache.create(userId, chatId);
+                    else
+                        throw new Error("You should first stop ongoing subscription -> /stop", chatId);
+                }
+                if (cache.existsById(userId)) {
+                    cache.setState(userId, state.get().toString());
+                    switch (state.get()) {
+                        case STOP:
                             AppUser appUser = appUserDAO.findById(userId);
                             offerCache.delete(appUser.getUuid());
                             cache.delete(userId, chatId);
-                        }
-                        return null;
+                            return null;
+                    }
                 }
             }
         }

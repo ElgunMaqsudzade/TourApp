@@ -5,9 +5,12 @@ import az.code.tourapp.components.SchedulerExecutor;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.OfferDAO;
 import az.code.tourapp.dtos.OfferCacheDTO;
+import az.code.tourapp.exceptions.NotFound;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 @Component
 public class OfferCacheImpl implements OfferCache {
@@ -19,9 +22,9 @@ public class OfferCacheImpl implements OfferCache {
 
     public OfferCacheImpl(SchedulerExecutor sch, OfferDAO offerDAO, RedisTemplate<String, Object> template, BotConfig config) {
         this.offerDAO = offerDAO;
-        this.sch = sch;
         this.hashOps = template.opsForHash();
         this.HASH_KEY = config.getRedis().getOffer();
+        this.sch = sch;
     }
 
     @Override
@@ -37,6 +40,9 @@ public class OfferCacheImpl implements OfferCache {
 
     @Override
     public OfferCacheDTO findById(String UUID) {
+        if (!hashOps.hasKey(HASH_KEY, UUID)) {
+            throw new NotFound("Offer not found");
+        }
         return hashOps.get(HASH_KEY, UUID);
     }
 
@@ -68,8 +74,14 @@ public class OfferCacheImpl implements OfferCache {
         cacheDTO.setLocked(value);
         save(uuid, cacheDTO);
         if (!value) {
-            sch.runDBOfferJob(uuid);
+            sch.runDBOffersJobJob(uuid);
         }
         return cacheDTO;
+    }
+
+
+    @Override
+    public Set<String> getUUIDList() {
+        return hashOps.keys(HASH_KEY);
     }
 }
