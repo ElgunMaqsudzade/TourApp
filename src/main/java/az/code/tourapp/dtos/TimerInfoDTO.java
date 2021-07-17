@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TimerInfoDTO<T> {
     private int fireCount;
+    private String cron;
     private boolean forever;
     private long intervalMS;
     private long offsetMS;

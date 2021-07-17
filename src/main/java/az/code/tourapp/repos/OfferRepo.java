@@ -1,7 +1,6 @@
 package az.code.tourapp.repos;
 
 import az.code.tourapp.models.Offer;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

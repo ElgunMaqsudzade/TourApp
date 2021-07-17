@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost/telegrambot
@@ -38,7 +37,11 @@ telegrambot:
     subscription: telegramuserdata
     dictionary: telegramdictionarydata
     offer: telegramofferdata
-  image:
-    extension: '.png'
-    root: src/main/resources/images/
+  offer:
+    image:
+      extension: '.png'
+      root: src/main/resources/images/
+    time:
+      start: '08:00'
+      end: '23:59'
 

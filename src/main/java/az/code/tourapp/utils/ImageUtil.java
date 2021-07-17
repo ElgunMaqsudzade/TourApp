@@ -20,8 +20,8 @@ public class ImageUtil {
     String extension;
 
     public ImageUtil(BotConfig config) {
-        this.root = config.getImage().getRoot();
-        this.extension = config.getImage().getExtension();
+        this.root = config.getOffer().getImage().getRoot();
+        this.extension = config.getOffer().getImage().getExtension();
     }
 
     @SneakyThrows

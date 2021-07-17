@@ -9,9 +9,8 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.stereotype.Component;
 
-@Component
+
 @RequiredArgsConstructor
 public class SubscribeJob implements Job {
     private final RabbitTemplate temp;

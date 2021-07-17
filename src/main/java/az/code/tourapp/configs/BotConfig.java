@@ -7,9 +7,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @Setter
 @Getter
@@ -24,7 +28,7 @@ public class BotConfig {
     private BotProxyProps proxy;
     private IgnoreProps ignore;
     private Redis redis;
-    private ImageProps image;
+    private OfferProps offer;
 
     @Data
     public static class BotProxyProps {
@@ -45,9 +49,24 @@ public class BotConfig {
         private String dictionary;
         private String offer;
     }
+
     @Data
-    public static class ImageProps {
-        private String root;
-        private String extension;
+    public static class OfferProps {
+        private ImageProps image;
+        private TimeProps time;
+
+        @Data
+        public static class ImageProps {
+            private String root;
+            private String extension;
+        }
+
+        @Data
+        public static class TimeProps {
+            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+            private LocalTime start;
+            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+            private LocalTime end;
+        }
     }
 }
