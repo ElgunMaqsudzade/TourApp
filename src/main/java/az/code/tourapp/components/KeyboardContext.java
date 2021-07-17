@@ -1,4 +1,4 @@
-package az.code.tourapp.utils;
+package az.code.tourapp.components;
 
 import az.code.tourapp.components.interfaces.ButtonGenerator;
 import az.code.tourapp.dtos.KeyboardDTO;

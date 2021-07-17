@@ -9,8 +9,7 @@ import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.models.enums.InputType;
 import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.models.*;
-import az.code.tourapp.services.SubCacheService;
-import az.code.tourapp.utils.KeyboardContext;
+import az.code.tourapp.services.interfaces.SubCacheService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -28,12 +27,18 @@ public class ReplyProcessor {
     private final KeyboardContext context;
     private final SubCacheService cache;
     private final DictionaryCache dCache;
-    private final MessageSender sender;
+    private final WebhookBotComponent sender;
     private final SchedulerExecutor sch;
 
     private final List<String> IGNORE;
 
-    public ReplyProcessor(SchedulerExecutor sch, ActionDAO actionDAO, KeyboardContext context, SubCacheService cache, DictionaryCache dCache, MessageSender sender, BotConfig config) {
+    public ReplyProcessor(SchedulerExecutor sch,
+                          ActionDAO actionDAO,
+                          KeyboardContext context,
+                          SubCacheService cache,
+                          DictionaryCache dCache,
+                          WebhookBotComponent sender,
+                          BotConfig config) {
         this.actionDAO = actionDAO;
         this.sch = sch;
         this.context = context;
@@ -76,7 +81,7 @@ public class ReplyProcessor {
         Optional<Action> action = actionDAO.getAction(botState, usersAnswer, locale);
 
         if (action.isPresent()) {
-            if(action.get().getCurrentState().isSavable()){
+            if (action.get().getCurrentState().isSavable()) {
                 if (!cache.saveData(userId, botState, usersAnswer))
                     throw new Error(errorReply.getMessage(), chatId);
             }
@@ -114,15 +119,14 @@ public class ReplyProcessor {
         replyToUser.setReplyMarkup(replyKeyboard);
 
         if (IGNORE.stream().anyMatch(usersAnswer::contains)) {
-            sender.editMessage(chatId, message_id, reply.getMessage(), (InlineKeyboardMarkup) replyKeyboard);
+            sender.sendEditedMessage(chatId, message_id, reply.getMessage(), (InlineKeyboardMarkup) replyKeyboard);
             return null;
         }
 
-        if(botState.equals(BasicState.SUBSCRIPTION_END.toString())){
+        if (botState.equals(BasicState.SUBSCRIPTION_END.toString())) {
             sch.runSubscribeJob(userId);
         }
 
         return replyToUser;
     }
-
 }

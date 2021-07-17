@@ -35,7 +35,7 @@ public class DictionaryCacheImpl implements DictionaryCache {
     @Override
     public Reply getReply(Long userId) {
         UserDataDTO user = cache.findById(userId);
-        String lang = user.getSubscription().get(BasicCache.language.toString());
+        String lang = user.getLang().getLang();
         String state = user.getState().getState();
         return getReply(state, lang);
     }

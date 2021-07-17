@@ -2,9 +2,8 @@ package az.code.tourapp.services;
 
 import az.code.tourapp.cache.interfaces.DictionaryCache;
 import az.code.tourapp.cache.interfaces.SubscriptionCache;
-import az.code.tourapp.components.MessageSender;
+import az.code.tourapp.components.WebhookBotComponent;
 import az.code.tourapp.daos.interfaces.AppUserDAO;
-import az.code.tourapp.daos.interfaces.ReplyDAO;
 import az.code.tourapp.dtos.UserDataDTO;
 import az.code.tourapp.models.BotState;
 import az.code.tourapp.models.enums.BasicCache;
@@ -12,6 +11,8 @@ import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.exceptions.NotFound;
 import az.code.tourapp.models.AppUser;
 import az.code.tourapp.models.enums.InputType;
+import az.code.tourapp.services.interfaces.SubCacheService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
@@ -19,18 +20,13 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class SubCacheServiceImpl implements SubCacheService {
-    SubscriptionCache cache;
-    DictionaryCache dCache;
-    AppUserDAO appUserDAO;
-    MessageSender sender;
+    private final SubscriptionCache cache;
+    private final DictionaryCache dCache;
+    private final AppUserDAO appUserDAO;
+    private final WebhookBotComponent sender;
 
-    public SubCacheServiceImpl(SubscriptionCache cache, DictionaryCache dCache, AppUserDAO appUserDAO, MessageSender sender) {
-        this.cache = cache;
-        this.dCache = dCache;
-        this.appUserDAO = appUserDAO;
-        this.sender = sender;
-    }
 
     @Override
     public boolean saveData(Long userId, String botState, String data) {
@@ -38,6 +34,10 @@ public class SubCacheServiceImpl implements SubCacheService {
         UserDataDTO user = findById(userId);
         String regex = state.getRegex();
 
+        if (botState.equals(BasicCache.language.toString())) {
+            setLocale(userId, data);
+            return true;
+        }
         if (regex == null) {
             user.getSubscription().put(state.getState(), data);
         } else {
@@ -74,6 +74,7 @@ public class SubCacheServiceImpl implements SubCacheService {
     public void setLocale(Long userId, String locale) {
         UserDataDTO userData = findById(userId);
         userData.getSubscription().put(BasicCache.language.toString(), locale);
+        userData.setLang(dCache.getLocale(locale));
         update(userId, userData);
     }
 

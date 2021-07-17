@@ -1,3 +1,4 @@
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost/telegrambot
@@ -22,7 +23,7 @@ spring:
 
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://2cedd820e5d8.ngrok.io
+  path: https://8df46260c34f.ngrok.io
   token: 1638447550:AAGL3wR5YBy3juayAx7borJc8XTrDDBX8G4
   proxy:
     type: no_proxy
@@ -37,6 +38,7 @@ telegrambot:
     subscription: telegramuserdata
     dictionary: telegramdictionarydata
     offer: telegramofferdata
-
-
+  image:
+    extension: '.png'
+    root: src/main/resources/images/
 
