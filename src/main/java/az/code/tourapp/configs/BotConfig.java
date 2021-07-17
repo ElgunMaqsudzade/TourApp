@@ -24,6 +24,7 @@ public class BotConfig {
     private BotProxyProps proxy;
     private IgnoreProps ignore;
     private Redis redis;
+    private ImageProps image;
 
     @Data
     public static class BotProxyProps {
@@ -43,5 +44,10 @@ public class BotConfig {
         private String subscription;
         private String dictionary;
         private String offer;
+    }
+    @Data
+    public static class ImageProps {
+        private String root;
+        private String extension;
     }
 }

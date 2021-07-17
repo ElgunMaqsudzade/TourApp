@@ -14,4 +14,6 @@ public interface OfferCache {
     void create(String UUID);
 
     OfferCacheDTO increase(String UUID);
+
+    OfferCacheDTO setLocked(boolean value, String uuid);
 }

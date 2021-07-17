@@ -1,9 +1,13 @@
 package az.code.tourapp.components;
 
+import az.code.tourapp.cache.interfaces.OfferCache;
 import az.code.tourapp.configs.BotConfig;
+import az.code.tourapp.daos.interfaces.AppUserDAO;
+import az.code.tourapp.models.AppUser;
 import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.exceptions.Error;
-import az.code.tourapp.services.SubCacheService;
+import az.code.tourapp.services.interfaces.MessageService;
+import az.code.tourapp.services.interfaces.SubCacheService;
 import az.code.tourapp.utils.EnumUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,13 +24,15 @@ import java.util.Optional;
 public class TelegramFacade {
     private final SubCacheService cache;
     private final BotStateContext stateContext;
-    private final MessageSender sender;
+    private final AppUserDAO appUserDAO;
+    private final OfferCache offerCache;
 
     private final String IGNORE;
 
-    public TelegramFacade(MessageSender sender, SubCacheService cache, BotStateContext stateContext, BotConfig config) {
+    public TelegramFacade(OfferCache offerCache, AppUserDAO appUserDAO, SubCacheService cache, BotStateContext stateContext, BotConfig config) {
+        this.appUserDAO = appUserDAO;
+        this.offerCache = offerCache;
         this.cache = cache;
-        this.sender = sender;
         this.stateContext = stateContext;
         this.IGNORE = config.getIgnore().getHard();
     }
@@ -71,6 +77,8 @@ public class TelegramFacade {
                         break;
                     case STOP:
                         if (cache.existsById(userId)) {
+                            AppUser appUser = appUserDAO.findById(userId);
+                            offerCache.delete(appUser.getUuid());
                             cache.delete(userId, chatId);
                         }
                         return null;

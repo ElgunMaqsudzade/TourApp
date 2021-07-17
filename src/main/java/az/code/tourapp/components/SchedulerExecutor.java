@@ -1,11 +1,7 @@
 package az.code.tourapp.components;
 
-
 import az.code.tourapp.dtos.TimerInfoDTO;
-import az.code.tourapp.jobs.DictionaryJob;
-import az.code.tourapp.jobs.HandleOfferJob;
-import az.code.tourapp.jobs.SendOfferJob;
-import az.code.tourapp.jobs.SubscribeJob;
+import az.code.tourapp.jobs.*;
 import az.code.tourapp.models.Offer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -19,15 +15,16 @@ public class SchedulerExecutor {
     }
 
 
-    public void runSendOfferJob(Offer offer) {
-        scheduler.schedule(SendOfferJob.class, TimerInfoDTO.builder().fireCount(1).data(offer).build());
-    }
     public void runHandleOfferJob(Offer offer) {
         scheduler.schedule(HandleOfferJob.class, TimerInfoDTO.builder().fireCount(1).data(offer).build());
     }
 
     public void runSubscribeJob(Long userid) {
         scheduler.schedule(SubscribeJob.class, TimerInfoDTO.builder().fireCount(1).data(userid).build());
+    }
+
+    public void runDBOfferJob(String uuid) {
+        scheduler.schedule(DBOfferJob.class, TimerInfoDTO.builder().fireCount(1).data(uuid).build());
     }
 
     @Bean

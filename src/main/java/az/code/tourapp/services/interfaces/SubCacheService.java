@@ -1,4 +1,4 @@
-package az.code.tourapp.services;
+package az.code.tourapp.services.interfaces;
 
 import az.code.tourapp.dtos.UserDataDTO;
 import az.code.tourapp.models.BotState;

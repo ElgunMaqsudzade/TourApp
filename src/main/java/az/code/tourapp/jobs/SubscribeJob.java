@@ -1,10 +1,9 @@
 package az.code.tourapp.jobs;
 
-import az.code.tourapp.cache.interfaces.SubscriptionCache;
 import az.code.tourapp.configs.RabbitMQConfig;
 import az.code.tourapp.dtos.TimerInfoDTO;
 import az.code.tourapp.models.enums.BasicState;
-import az.code.tourapp.services.SubCacheService;
+import az.code.tourapp.services.interfaces.SubCacheService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

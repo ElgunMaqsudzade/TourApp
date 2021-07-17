@@ -17,27 +17,18 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class HandleOfferJob implements Job {
+public class DBOfferJob implements Job {
     private final OfferDAO offerDAO;
     private final OfferCache cache;
     private final MessageService service;
 
-
     @Override
     public void execute(JobExecutionContext ctx) throws JobExecutionException {
-        TimerInfoDTO<Offer> infoDTO = (TimerInfoDTO<Offer>) ctx.getJobDetail().getJobDataMap().get(this.getClass().getSimpleName());
-        Offer offer = infoDTO.getData();
-        String uuid = offer.getUUID();
-        cache.create(uuid);
-        OfferCacheDTO current = cache.findById(uuid);
-        if (current.isLocked()) {
-            offerDAO.save(offer);
-        } else {
-            if (offerDAO.exists(uuid)) {
-                offerDAO.save(offer);
-            } else {
-                service.sendOffer(offer);
-            }
+        TimerInfoDTO<String> infoDTO = (TimerInfoDTO<String>) ctx.getJobDetail().getJobDataMap().get(this.getClass().getSimpleName());
+        String uuid = infoDTO.getData();
+        while (!cache.findById(uuid).isLocked()){
+            Optional<Offer> offer = offerDAO.pop(uuid);
+            offer.ifPresent(service::sendOffer);
         }
     }
 }

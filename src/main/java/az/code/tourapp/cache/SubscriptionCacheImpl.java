@@ -5,12 +5,10 @@ import az.code.tourapp.cache.interfaces.SubscriptionCache;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.dtos.UserDataDTO;
 import az.code.tourapp.exceptions.NotFound;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 /**

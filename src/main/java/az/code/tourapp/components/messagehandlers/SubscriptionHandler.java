@@ -1,6 +1,5 @@
 package az.code.tourapp.components.messagehandlers;
 
-import az.code.tourapp.components.MessageSender;
 import az.code.tourapp.components.ReplyProcessor;
 import az.code.tourapp.components.interfaces.StateHandler;
 import az.code.tourapp.configs.BotConfig;
@@ -10,8 +9,8 @@ import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.models.Action;
 import az.code.tourapp.models.Reply;
 import az.code.tourapp.models.enums.BasicState;
-import az.code.tourapp.services.SubCacheService;
-import lombok.RequiredArgsConstructor;
+import az.code.tourapp.components.WebhookBotComponent;
+import az.code.tourapp.services.interfaces.SubCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -29,11 +28,16 @@ public class SubscriptionHandler implements StateHandler {
     private final SubCacheService cache;
     private final ReplyDAO replyDAO;
     private final ActionDAO actionDAO;
-    private final MessageSender sender;
+    private final WebhookBotComponent sender;
 
     private final List<String> IGNORE;
 
-    public SubscriptionHandler(ReplyProcessor replyUtil, SubCacheService cache, ReplyDAO replyDAO, ActionDAO actionDAO, MessageSender sender, BotConfig config) {
+    public SubscriptionHandler(ReplyProcessor replyUtil,
+                               SubCacheService cache,
+                               ReplyDAO replyDAO,
+                               ActionDAO actionDAO,
+                               WebhookBotComponent sender,
+                               BotConfig config) {
         this.replyUtil = replyUtil;
         this.cache = cache;
         this.replyDAO = replyDAO;
@@ -74,7 +78,7 @@ public class SubscriptionHandler implements StateHandler {
                 if (!cache.saveData(userId, botState, usersAnswer))
                     throw new Error(errorReply.getMessage(), chatId);
             }
-            sender.editMessage(chatId, message_id, usersAnswer, null);
+            sender.sendEditedMessage(chatId, message_id, usersAnswer, null);
             cache.setState(userId, action.get().getNextState().getState());
         } else
             throw new Error(errorReply.getMessage(), chatId);
