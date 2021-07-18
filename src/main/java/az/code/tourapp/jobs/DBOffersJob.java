@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class DBOfferJob implements Job {
+public class DBOffersJob implements Job {
     private final OfferDAO offerDAO;
     private final OfferCache cache;
     private final MessageService service;

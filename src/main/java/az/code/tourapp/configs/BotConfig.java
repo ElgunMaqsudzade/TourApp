@@ -54,6 +54,7 @@ public class BotConfig {
     public static class OfferProps {
         private ImageProps image;
         private TimeProps time;
+        private Integer count;
 
         @Data
         public static class ImageProps {

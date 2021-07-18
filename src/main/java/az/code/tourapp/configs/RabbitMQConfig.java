@@ -21,10 +21,16 @@ public class RabbitMQConfig {
     private String exchange;
     public String offer = "offer";
     public String subscription = "subscription";
+    public String offerReply = "offer_reply";
 
     @Bean
     public Queue queueOffer() {
         return new Queue(offer);
+    }
+
+    @Bean
+    public Queue queueOfferReply() {
+        return new Queue(offerReply);
     }
 
     @Bean
@@ -40,6 +46,11 @@ public class RabbitMQConfig {
     @Bean
     public Binding bindingOffer() {
         return BindingBuilder.bind(queueOffer()).to(exchange()).with(offer);
+    }
+
+    @Bean
+    public Binding bindingOfferReply() {
+        return BindingBuilder.bind(queueOfferReply()).to(exchange()).with(offerReply);
     }
 
     @Bean

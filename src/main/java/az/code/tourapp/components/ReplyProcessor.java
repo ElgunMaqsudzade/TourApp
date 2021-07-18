@@ -118,7 +118,7 @@ public class ReplyProcessor {
 
         replyToUser.setReplyMarkup(replyKeyboard);
 
-        if (IGNORE.stream().anyMatch(usersAnswer::contains)) {
+        if (usersAnswer != null && IGNORE.stream().anyMatch(usersAnswer::contains)) {
             sender.sendEditedMessage(chatId, message_id, reply.getMessage(), (InlineKeyboardMarkup) replyKeyboard);
             return null;
         }
@@ -126,7 +126,15 @@ public class ReplyProcessor {
         if (botState.equals(BasicState.SUBSCRIPTION_END.toString())) {
             sch.runSubscribeJob(userId);
         }
+        if (botState.equals(BasicState.OFFER_END.toString())) {
+            sch.runOfferReplyJob(userId);
+        }
+
 
         return replyToUser;
+    }
+
+    public BotApiMethod<?> sendNextAction(Long userId, Long chatId) {
+        return processFinalAction(userId, chatId, null, null);
     }
 }

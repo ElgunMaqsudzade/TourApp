@@ -20,11 +20,14 @@ public class OfferCacheImpl implements OfferCache {
 
     private final String HASH_KEY;
 
+    private final Integer offerCount;
+
     public OfferCacheImpl(SchedulerExecutor sch, OfferDAO offerDAO, RedisTemplate<String, Object> template, BotConfig config) {
         this.offerDAO = offerDAO;
         this.hashOps = template.opsForHash();
         this.HASH_KEY = config.getRedis().getOffer();
         this.sch = sch;
+        this.offerCount = config.getOffer().getCount();
     }
 
     @Override
@@ -61,7 +64,7 @@ public class OfferCacheImpl implements OfferCache {
     public OfferCacheDTO increase(String UUID) {
         OfferCacheDTO cacheDTO = findById(UUID);
         cacheDTO.setOfferCount(cacheDTO.getOfferCount() + 1);
-        if (cacheDTO.getOfferCount() % 5 == 0) {
+        if (cacheDTO.getOfferCount() % offerCount == 0) {
             cacheDTO.setLocked(true);
         }
         save(UUID, cacheDTO);

@@ -83,6 +83,8 @@ public class TelegramFacade {
                             cache.delete(userId, chatId);
                             return null;
                     }
+                }else{
+                    throw new Error("You dont have any ongoing subscription. Please write -> /start for starting.", chatId);
                 }
             }
         }

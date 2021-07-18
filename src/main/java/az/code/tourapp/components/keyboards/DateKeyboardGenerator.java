@@ -2,8 +2,8 @@ package az.code.tourapp.components.keyboards;
 
 import az.code.tourapp.components.interfaces.ButtonGenerator;
 import az.code.tourapp.configs.BotConfig;
+import az.code.tourapp.dtos.KeyboardDTO;
 import az.code.tourapp.models.enums.InputType;
-import com.tbot.calendar.model.KeyboardButton;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -48,15 +48,15 @@ public class DateKeyboardGenerator implements ButtonGenerator<InlineKeyboardMark
             return null;
         }
 
-        List<List<KeyboardButton>> keyboard = new ArrayList<>();
+        List<List<KeyboardDTO>> keyboard = new ArrayList<>();
 
         // row - Month and Year
-        List<KeyboardButton> headerRow = new ArrayList<>();
+        List<KeyboardDTO> headerRow = new ArrayList<>();
         headerRow.add(createButton(IGNORE, new SimpleDateFormat("MMM yyyy").format(date.toDate())));
         keyboard.add(headerRow);
 
         // row - Days of the week
-        List<KeyboardButton> daysOfWeekRow = new ArrayList<>();
+        List<KeyboardDTO> daysOfWeekRow = new ArrayList<>();
         for (String day : WD) {
             daysOfWeekRow.add(createButton(IGNORE, day));
         }
@@ -73,7 +73,7 @@ public class DateKeyboardGenerator implements ButtonGenerator<InlineKeyboardMark
             shift = 0;
         }
 
-        List<KeyboardButton> controlsRow = new ArrayList<>();
+        List<KeyboardDTO> controlsRow = new ArrayList<>();
         controlsRow.add(createButton("<|" + date, "<"));
         controlsRow.add(createButton(">|" + date, ">"));
         keyboard.add(controlsRow);
@@ -91,12 +91,12 @@ public class DateKeyboardGenerator implements ButtonGenerator<InlineKeyboardMark
         return InlineKeyboardMarkup.builder().keyboard(keyboardBtn).build();
     }
 
-    private KeyboardButton createButton(String callBack, String text) {
-        return new KeyboardButton().setCallbackData(callBack).setText(text);
+    private KeyboardDTO createButton(String callBack, String text) {
+        return KeyboardDTO.builder().callbackData(callBack).text(text).build();
     }
 
-    private List<KeyboardButton> buildRow(LocalDate date, int shift, String IGNORE) {
-        List<KeyboardButton> row = new ArrayList<>();
+    public List<KeyboardDTO> buildRow(LocalDate date, int shift, String IGNORE) {
+        List<KeyboardDTO> row = new ArrayList<>();
         int day = date.getDayOfMonth();
         LocalDate callbackDate = date;
         for (int j = 0; j < shift; j++) {
