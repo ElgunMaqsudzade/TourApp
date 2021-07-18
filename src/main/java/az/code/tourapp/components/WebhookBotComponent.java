@@ -70,6 +70,14 @@ public class WebhookBotComponent extends TelegramWebhookBot {
         }
     }
 
+    public void sendAction(BotApiMethod<?> message) {
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error(e.getMessage());
+        }
+    }
+
     public void sendEditedMessage(Long chatId, Integer messageId, String text, InlineKeyboardMarkup keyboard) {
         try {
             EditMessageText new_message = EditMessageText

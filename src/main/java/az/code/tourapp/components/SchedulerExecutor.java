@@ -25,6 +25,10 @@ public class SchedulerExecutor {
         scheduler.schedule(SubscribeJob.class, TimerInfoDTO.builder().fireCount(1).data(userid).build());
     }
 
+    public void runOfferReplyJob(Long userid) {
+        scheduler.schedule(OfferReplyJob.class, TimerInfoDTO.builder().fireCount(1).data(userid).build());
+    }
+
     public void runDBOffersJobJob(String uuid) {
         scheduler.schedule(DBOffersJob.class, TimerInfoDTO.builder().fireCount(1).data(uuid).build());
     }
@@ -34,9 +38,10 @@ public class SchedulerExecutor {
         scheduler.schedule(ScheduledOfferJob.class, TimerInfoDTO.builder().cron(timerUtil.toCron()).build());
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(cron = "0 0 0 * * ?")
+    @Bean
     public void runDictionaryJob() {
-        scheduler.schedule(DictionaryJob.class, TimerInfoDTO.builder().fireCount(1).forever(true).build());
+        scheduler.schedule(DictionaryJob.class, TimerInfoDTO.builder().fireCount(1).build());
     }
 
 }

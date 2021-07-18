@@ -109,13 +109,13 @@ public class SubCacheServiceImpl implements SubCacheService {
 
     @Override
     public boolean existsSubById(Long userId) {
-        return findById(userId).getSubscription() != null;
+        return !findById(userId).getSubscription().isEmpty();
     }
 
     @Override
     public void deleteSubscription(Long userId) {
         UserDataDTO user = findById(userId);
-        update(userId, user.toBuilder().subscription(null).build());
+        update(userId, user.toBuilder().subscription(new HashMap<>()).build());
     }
 
     @Override
