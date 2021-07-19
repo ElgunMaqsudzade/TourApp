@@ -1,10 +1,15 @@
 spring:
-#  profiles:
-#    active: dev
+  datasource:
+    url: jdbc:postgresql://localhost/telegrambot
+    password: salam123
+    username: postgres
   jpa:
     hibernate:
       ddl-auto: update
     open-in-view: false
+  redis:
+    host: 'localhost'
+    port: 6379
   servlet:
     multipart:
       max-file-size: 10MB
@@ -12,7 +17,7 @@ spring:
 
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://tourappspring.herokuapp.com/
+  path: https://19f71a8bcd77.ngrok.io
   token: 1925789901:AAHh8AkOrUwUrTsXOjCbtqWNLbY8eoP2h_E
   proxy:
     type: no_proxy

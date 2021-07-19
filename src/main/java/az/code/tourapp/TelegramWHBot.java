@@ -41,7 +41,7 @@ public class TelegramWHBot extends TelegramWebhookBot {
         return telegramFacade.handleUpdate(update);
     }
 
-    @RabbitListener(queues = "offer")
+    @RabbitListener(queues = RabbitMQConfig.offer)
     public void sendMessage(Offer offer) {
         sch.runHandleOfferJob(offer);
     }

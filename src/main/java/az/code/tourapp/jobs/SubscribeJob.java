@@ -14,7 +14,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 @RequiredArgsConstructor
 public class SubscribeJob implements Job {
     private final RabbitTemplate temp;
-    private final RabbitMQConfig config;
     private final SubCacheService cache;
 
 
@@ -22,7 +21,7 @@ public class SubscribeJob implements Job {
     public void execute(JobExecutionContext ctx) throws JobExecutionException {
         TimerInfoDTO<Long> infoDTO = (TimerInfoDTO<Long>) ctx.getJobDetail().getJobDataMap().get(this.getClass().getSimpleName());
         Long userId = infoDTO.getData();
-        temp.convertAndSend(config.getSubscription(), cache.findById(userId).getSubscription());
+        temp.convertAndSend(RabbitMQConfig.subscription, cache.findById(userId).getSubscription());
         cache.setMainState(userId, BasicState.OFFER);
         cache.setState(userId, BasicState.OFFER.toString());
         cache.deleteSubscription(userId);
