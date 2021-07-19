@@ -14,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -25,44 +24,32 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OfferDAOImpl implements OfferDAO {
     private final OfferRepo offerRepo;
-    private final ImageUtil imageUtil;
-
-
-    @SneakyThrows
-    @Override
-    public Optional<Offer> pop(String uuid) {
-        Specification<Offer> offerSpecification = (root, query, cb) -> cb.equal(root.get(Offer_.U_UI_D), uuid);
-        Page<Offer> offerPage = offerRepo
-                .findAll(offerSpecification, PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "id")));
-
-        Optional<Offer> opOffer = offerPage.getContent().stream().findFirst();
-        if (opOffer.isPresent()) {
-            Offer offer = opOffer.get();
-            offer.setFileAsBytes(Files.readAllBytes(Paths.get(offer.getFilePath())));
-            imageUtil.deleteImage(offer.getFilePath());
-            offerRepo.delete(offer);
-        }
-        return opOffer;
-    }
 
     @Override
-    public boolean exists(String uuid) {
+    public boolean existsByUUID(String uuid) {
         return offerRepo.existsByUUID(uuid);
     }
 
     @Override
     public Offer save(Offer offer) {
-        String pathName = imageUtil.saveImage(offer.getFileAsBytes());
-        return offerRepo.save(offer.toBuilder().filePath(pathName).build());
+        return offerRepo.save(offer);
     }
 
     @Override
-    public void deleteByUUID(String uuid) {
-        Specification<Offer> offerSpecification = (root, query, cb) -> cb.equal(root.get(Offer_.U_UI_D), uuid);
-        List<Offer> offerList = offerRepo.findAll(offerSpecification);
-        if (offerList.size() > 0) {
-            offerList.stream().parallel().forEach(i -> imageUtil.deleteImage(i.getFilePath()));
-        }
+    public void deleteAll(List<Offer> offerList) {
         offerRepo.deleteAll(offerList);
+    }
+
+    @Override
+    public void delete(Offer offer) {
+        offerRepo.delete(offer);
+    }
+
+    @Override
+    public Optional<Offer> findFirstByUUID(String uuid) {
+        Specification<Offer> offerSpecification = (root, query, cb) -> cb.equal(root.get(Offer_.U_UI_D), uuid);
+        Page<Offer> offerPage = offerRepo
+                .findAll(offerSpecification, PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "id")));
+        return offerPage.getContent().stream().findFirst();
     }
 }

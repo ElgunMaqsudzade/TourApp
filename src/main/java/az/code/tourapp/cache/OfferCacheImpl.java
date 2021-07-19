@@ -3,9 +3,9 @@ package az.code.tourapp.cache;
 import az.code.tourapp.cache.interfaces.OfferCache;
 import az.code.tourapp.components.SchedulerExecutor;
 import az.code.tourapp.configs.BotConfig;
-import az.code.tourapp.daos.interfaces.OfferDAO;
 import az.code.tourapp.dtos.OfferCacheDTO;
 import az.code.tourapp.exceptions.NotFound;
+import az.code.tourapp.services.interfaces.OfferService;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Component
 public class OfferCacheImpl implements OfferCache {
-    OfferDAO offerDAO;
+    OfferService offerService;
     SchedulerExecutor sch;
     HashOperations<String, String, OfferCacheDTO> hashOps;
 
@@ -22,8 +22,8 @@ public class OfferCacheImpl implements OfferCache {
 
     private final Integer offerCount;
 
-    public OfferCacheImpl(SchedulerExecutor sch, OfferDAO offerDAO, RedisTemplate<String, Object> template, BotConfig config) {
-        this.offerDAO = offerDAO;
+    public OfferCacheImpl(SchedulerExecutor sch, OfferService offerService, RedisTemplate<String, Object> template, BotConfig config) {
+        this.offerService = offerService;
         this.hashOps = template.opsForHash();
         this.HASH_KEY = config.getRedis().getOffer();
         this.sch = sch;
@@ -37,7 +37,7 @@ public class OfferCacheImpl implements OfferCache {
 
     @Override
     public void delete(String UUID) {
-        offerDAO.deleteByUUID(UUID);
+        offerService.deleteByUUID(UUID);
         hashOps.delete(HASH_KEY, UUID);
     }
 

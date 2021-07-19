@@ -33,6 +33,7 @@ public class WebHookController {
         log.warn(ex.getMessage());
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @ExceptionHandler(Error.class)
     public ResponseEntity<String> errorHandler(Error ex) {
         log.warn(ex.getMessage());

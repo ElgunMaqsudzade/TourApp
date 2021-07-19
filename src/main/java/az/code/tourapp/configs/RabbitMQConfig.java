@@ -23,6 +23,7 @@ public class RabbitMQConfig {
     public String subscription = "subscription";
     public String offerReply = "offer_reply";
 
+
     @Bean
     public Queue queueOffer() {
         return new Queue(offer);
