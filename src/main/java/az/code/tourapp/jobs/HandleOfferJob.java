@@ -1,11 +1,11 @@
 package az.code.tourapp.jobs;
 
 import az.code.tourapp.cache.interfaces.OfferCache;
-import az.code.tourapp.daos.interfaces.OfferDAO;
 import az.code.tourapp.dtos.OfferCacheDTO;
 import az.code.tourapp.dtos.TimerInfoDTO;
 import az.code.tourapp.models.Offer;
 import az.code.tourapp.services.interfaces.MessageService;
+import az.code.tourapp.services.interfaces.OfferService;
 import az.code.tourapp.utils.TimerUtil;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 public class HandleOfferJob implements Job {
-    private final OfferDAO offerDAO;
+    private final OfferService offerService;
     private final OfferCache cache;
     private final MessageService service;
     private final TimerUtil timer;
@@ -31,10 +31,10 @@ public class HandleOfferJob implements Job {
         cache.create(uuid);
         OfferCacheDTO current = cache.findById(uuid);
         if (current.isLocked() || !timer.isAppropriate()) {
-            offerDAO.save(offer);
+            offerService.save(offer);
         } else{
-            if (offerDAO.exists(uuid)) {
-                offerDAO.save(offer);
+            if (offerService.existsByUUID(uuid)) {
+                offerService.save(offer);
             } else {
                 service.sendOffer(offer);
             }

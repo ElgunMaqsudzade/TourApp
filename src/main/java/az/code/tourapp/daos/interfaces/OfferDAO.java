@@ -1,18 +1,18 @@
 package az.code.tourapp.daos.interfaces;
 
 import az.code.tourapp.models.Offer;
-import lombok.SneakyThrows;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface OfferDAO {
-    Optional<Offer> pop(String uuid);
-
-    boolean exists(String uuid);
+    boolean existsByUUID(String uuid);
 
     Offer save(Offer offer);
 
+    void deleteAll(List<Offer> offerList);
 
-    void deleteByUUID(String uuid);
+    void delete(Offer offer);
+
+    Optional<Offer> findFirstByUUID(String uuid);
 }

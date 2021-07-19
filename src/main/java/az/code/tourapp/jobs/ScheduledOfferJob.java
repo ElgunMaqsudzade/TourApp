@@ -2,9 +2,9 @@ package az.code.tourapp.jobs;
 
 
 import az.code.tourapp.cache.interfaces.OfferCache;
-import az.code.tourapp.daos.interfaces.OfferDAO;
 import az.code.tourapp.models.Offer;
 import az.code.tourapp.services.interfaces.MessageService;
+import az.code.tourapp.services.interfaces.OfferService;
 import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -16,7 +16,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ScheduledOfferJob implements Job {
     private final OfferCache cache;
-    private final OfferDAO offerDAO;
+    private final OfferService offerService;
     private final MessageService service;
 
     @Override
@@ -27,7 +27,7 @@ public class ScheduledOfferJob implements Job {
 
     private void sendDBOffers(String uuid) {
         while (!cache.findById(uuid).isLocked()) {
-            Optional<Offer> offer = offerDAO.pop(uuid);
+            Optional<Offer> offer = offerService.pop(uuid);
             offer.ifPresent(service::sendOffer);
         }
     }
