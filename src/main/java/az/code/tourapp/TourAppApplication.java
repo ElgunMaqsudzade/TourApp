@@ -7,7 +7,6 @@ import java.time.LocalTime;
 
 @SpringBootApplication
 public class TourAppApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(TourAppApplication.class, args);
     }

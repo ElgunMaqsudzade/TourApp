@@ -19,7 +19,6 @@ import java.util.Map;
 public class OfferReplyJob implements Job {
     private final AppUserDAO appUserDAO;
     private final RabbitTemplate temp;
-    private final RabbitMQConfig config;
     private final SubCacheService cache;
 
 
@@ -32,7 +31,7 @@ public class OfferReplyJob implements Job {
         offerReply.put("userId", String.valueOf(userId));
         offerReply.put("chatId", String.valueOf(appUser.getChatId()));
         offerReply.put("uuid", String.valueOf(appUser.getUuid()));
-        temp.convertAndSend(config.getOfferReply(), offerReply);
+        temp.convertAndSend(RabbitMQConfig.offerReply, offerReply);
         cache.setMainState(userId, BasicState.IDLE);
         cache.setState(userId, BasicState.IDLE.toString());
         cache.deleteSubscription(userId);
