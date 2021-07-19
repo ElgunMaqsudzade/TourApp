@@ -1,6 +1,9 @@
 package az.code.tourapp.configs;
 
 
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.RedisURI;
+import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -12,15 +15,28 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
-@Profile("!dev")
+@Profile("dev")
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
 
+
+    @Bean
+    JedisPoolConfig jedisPoolConfig() {
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxTotal(10);
+        poolConfig.setMaxIdle(5);
+        poolConfig.setMinIdle(1);
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
+        poolConfig.setTestWhileIdle(true);
+        return poolConfig;
+    }
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory() throws URISyntaxException {
@@ -30,7 +46,11 @@ public class RedisConfig {
         configuration.setPort(redisUri.getPort());
         configuration.setHostName(redisUri.getHost());
         configuration.setPassword(redisUri.getUserInfo().split(":", 2)[1]);
-        JedisClientConfiguration clientConfig = JedisClientConfiguration.builder().build();
+        JedisClientConfiguration.JedisClientConfigurationBuilder builder = JedisClientConfiguration.builder();
+        JedisClientConfiguration clientConfig = builder
+                .usePooling()
+                .poolConfig(jedisPoolConfig())
+                .build();
         return new JedisConnectionFactory(configuration, clientConfig);
     }
 
