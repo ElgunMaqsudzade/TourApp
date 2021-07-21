@@ -1,15 +1,10 @@
 package az.code.tourapp.configs;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,10 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Profile("!dev")
-@Setter
-@Getter
 @Configuration
-@RequiredArgsConstructor
 public class RabbitMQConfig {
     private static final String exchange = "exchange";
     public static final String offer = "offer";

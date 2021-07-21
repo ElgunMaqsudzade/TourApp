@@ -77,7 +77,7 @@ public class OfferCacheImpl implements OfferCache {
         cacheDTO.setLocked(value);
         save(uuid, cacheDTO);
         if (!value) {
-            sch.runDBOffersJobJob(uuid);
+            sch.runDBOffersJob(uuid);
         }
         return cacheDTO;
     }

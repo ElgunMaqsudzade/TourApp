@@ -29,7 +29,7 @@ public class SchedulerExecutor {
         scheduler.schedule(OfferReplyJob.class, TimerInfoDTO.builder().fireCount(1).data(userid).build());
     }
 
-    public void runDBOffersJobJob(String uuid) {
+    public void runDBOffersJob(String uuid) {
         scheduler.schedule(DBOffersJob.class, TimerInfoDTO.builder().fireCount(1).data(uuid).build());
     }
 

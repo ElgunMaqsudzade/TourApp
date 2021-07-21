@@ -30,7 +30,7 @@ telegrambot:
   offer:
     image:
       extension: '.png'
-      root: src/main/resources/images/
+      root: src/main/resources/images
     time:
       start: '08:00'
       end: '23:59'

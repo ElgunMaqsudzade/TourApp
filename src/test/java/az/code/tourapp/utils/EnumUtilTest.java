@@ -30,10 +30,10 @@ class EnumUtilTest {
         //given
         String value = "/start";
         String secondValue = "/sdada";
-        Class aClass = BasicState.class;
+        Class<BasicState> aClass = BasicState.class;
         //when
-        Optional<BasicState> valueOf = EnumUtil.valueOf(value, aClass);
-        Optional<BasicState> secondValueOf = EnumUtil.valueOf(secondValue, aClass);
+        Optional<BasicState> valueOf = EnumUtil.commandToEnum(value, aClass);
+        Optional<BasicState> secondValueOf = EnumUtil.commandToEnum(secondValue, aClass);
         //expected
         assertThat(BasicState.START).isEqualTo(valueOf.get());
         assertThat(secondValueOf).isEmpty();

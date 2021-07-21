@@ -1,4 +1,6 @@
 spring:
+#  profiles:
+#    active: dev
   datasource:
     url: jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
@@ -12,17 +14,11 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-  rabbitmq:
-    template:
-      exchange: exchange
-      subscription: subscription
-      offer: offer
-      offer-reply: 'offer_reply'
 
 
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://19f71a8bcd77.ngrok.io
+  path: https://tourappspring.herokuapp.com/
   token: 1925789901:AAHh8AkOrUwUrTsXOjCbtqWNLbY8eoP2h_E
   proxy:
     type: no_proxy
@@ -40,9 +36,8 @@ telegrambot:
   offer:
     image:
       extension: '.png'
-      root: src/main/resources/images/
+      root: src/main/resources/images
     time:
       start: '08:00'
       end: '23:59'
     count: 3
-

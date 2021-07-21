@@ -7,6 +7,7 @@ import az.code.tourapp.dtos.UserDataDTO;
 import az.code.tourapp.exceptions.NotFound;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.Objects;
@@ -15,7 +16,7 @@ import java.util.Objects;
  * Redis based cache.
  */
 
-@Repository
+@Component
 public class SubscriptionCacheImpl implements SubscriptionCache {
     HashOperations<String, Long, UserDataDTO> hashOperations;
     private final String HASH_KEY;

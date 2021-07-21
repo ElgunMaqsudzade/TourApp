@@ -1,8 +1,5 @@
 package az.code.tourapp.configs.dev;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -10,22 +7,17 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Profile("dev")
-@Setter
-@Getter
 @Configuration
-@RequiredArgsConstructor
-@ConfigurationProperties(prefix = "spring.rabbitmq.template", ignoreInvalidFields = true)
 public class RabbitMQConfig {
-    private String exchange;
-    public String offer = "offer";
-    public String subscription = "subscription";
-    public String offerReply = "offer_reply";
+    private static final String exchange = "exchange";
+    public static final String offer = "offer";
+    public static final String subscription = "subscription";
+    public static final String offerReply = "offer_reply";
 
 
     @Bean

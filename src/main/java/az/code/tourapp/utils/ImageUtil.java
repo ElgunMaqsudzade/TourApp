@@ -7,6 +7,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,9 +33,13 @@ public class ImageUtil {
 
     @SneakyThrows
     public String saveImage(byte[] bytes) {
-        Path path = Paths.get(root + UUID.randomUUID() + extension);
-        Files.write(path, bytes);
-        return path.toString();
+        File file = new File(root);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        Path fullPath = Paths.get(root + "/" + UUID.randomUUID() + extension);
+        Files.write(fullPath, bytes);
+        return fullPath.toString();
     }
 
     @SneakyThrows
