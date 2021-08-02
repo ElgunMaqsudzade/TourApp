@@ -5,7 +5,6 @@ import az.code.tourapp.components.WebhookBotComponent;
 import az.code.tourapp.exceptions.Error;
 import az.code.tourapp.exceptions.NotFound;
 import az.code.tourapp.models.Offer;
-import az.code.tourapp.services.MessageServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -51,7 +50,6 @@ public class WebHookController {
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
         return telegramWHBot.onWebhookUpdateReceived(update);
     }
-
 
     @RequestMapping(value = "/api/v1/send", method = RequestMethod.POST)
     public ResponseEntity<?> offerFromAgent(@RequestParam MultipartFile file, @Valid @ModelAttribute Offer offer) throws IOException {

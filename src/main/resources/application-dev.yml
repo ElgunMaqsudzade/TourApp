@@ -14,10 +14,9 @@ spring:
     multipart:
       max-file-size: 10MB
 
-
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://799424eed53f.ngrok.io
+  path: https://c16529e6ab59.ngrok.io
   token: 1925789901:AAHh8AkOrUwUrTsXOjCbtqWNLbY8eoP2h_E
   proxy:
     type: no_proxy
@@ -37,7 +36,8 @@ telegrambot:
       extension: '.png'
       root: src/main/resources/images
     time:
-      start: '08:00'
-      end: '23:59'
+      start: '09:00'
+      end: '23:00'
     count: 3
-
+server:
+  port: 8082

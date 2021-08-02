@@ -49,7 +49,8 @@ public class TelegramFacade {
 
 
         Message message = update.getMessage();
-        if (message != null && message.hasText()) {
+
+        if (message != null && (message.hasText() || message.hasContact())) {
             log.info("New message from User:{}, chatId: {},  with text: {}",
                     message.getFrom().getFirstName(), message.getChatId(), message.getText());
             replyMessage = handleInput(message);
@@ -83,7 +84,7 @@ public class TelegramFacade {
                             cache.delete(userId, chatId);
                             return null;
                     }
-                }else{
+                } else {
                     throw new Error("You dont have any ongoing subscription. Please write -> /start for starting.", chatId);
                 }
             }

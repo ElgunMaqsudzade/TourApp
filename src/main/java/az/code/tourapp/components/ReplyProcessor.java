@@ -15,7 +15,12 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -115,6 +120,18 @@ public class ReplyProcessor {
         }
 
         ReplyKeyboard replyKeyboard = context.generateKeyboard(buttons);
+
+
+        if (botState.equals(BasicState.PHONE.toString())) {
+            KeyboardRow keyboardFirstRow = new KeyboardRow();
+            KeyboardButton keyboardButton = KeyboardButton.builder().text("Share your number >").requestContact(true).build();
+            keyboardFirstRow.add(keyboardButton);
+            replyKeyboard = ReplyKeyboardMarkup.builder()
+                    .resizeKeyboard(true)
+                    .oneTimeKeyboard(true)
+                    .keyboardRow(keyboardFirstRow)
+                    .build();
+        }
 
         replyToUser.setReplyMarkup(replyKeyboard);
 

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -40,20 +41,22 @@ public class OfferHandler implements StateHandler {
         long chatId = message.getChatId();
         Integer message_id = message.getMessageId();
 
-        if (message.isReply()) {
+
+        if (message.isReply() && message.getReplyToMessage().hasPhoto()) {
             UserDataDTO userDataDTO = cacheService.findById(userId);
             Map<String, String> offer = userDataDTO.getSubscription();
-            offer.put("firstName", message.getFrom().getFirstName());
-            offer.put("lastName", message.getFrom().getLastName());
-            offer.put("messageText", message.getReplyToMessage().getCaption());
-            offer.put("messageId", String.valueOf(message.getReplyToMessage().getMessageId()));
+            offer.put("offerId", getOfferId(message.getReplyToMessage().getCaption()));
             cacheService.update(userId, userDataDTO);
-            cacheService.setState(userId, BasicState.PHONE_CHOICE.toString());
+            cacheService.setState(userId, BasicState.PHONE.toString());
             cacheService.setMainState(userId, BasicState.CLIENT);
             replyProcessor.processFinalAction(userId, chatId, message_id, usersAnswer);
         }
 
         return replyProcessor.sendNextAction(userId, chatId);
+    }
+
+    private String getOfferId(String caption) {
+        return caption.substring(caption.lastIndexOf("#") + 1);
     }
 
     @Override

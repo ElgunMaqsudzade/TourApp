@@ -8,6 +8,7 @@ public enum BasicState {
     IDLE,
     SUBSCRIPTION_END,
     PHONE_CHOICE,
+    PHONE,
     OFFER_END,
     OFFER,
     CLIENT,
