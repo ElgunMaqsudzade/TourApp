@@ -1,6 +1,6 @@
 package az.code.tourapp.jobs;
 
-import az.code.tourapp.cache.interfaces.OfferCache;
+import az.code.tourapp.cache.interfaces.OfferCapCache;
 import az.code.tourapp.dtos.OfferCacheDTO;
 import az.code.tourapp.dtos.TimerInfoDTO;
 import az.code.tourapp.models.Offer;
@@ -11,14 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.stereotype.Component;
-
 
 
 @RequiredArgsConstructor
 public class HandleOfferJob implements Job {
     private final OfferService offerService;
-    private final OfferCache cache;
+    private final OfferCapCache cache;
     private final MessageService service;
     private final TimerUtil timer;
 

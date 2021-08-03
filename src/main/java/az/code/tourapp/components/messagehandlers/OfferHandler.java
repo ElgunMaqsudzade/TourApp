@@ -1,6 +1,7 @@
 package az.code.tourapp.components.messagehandlers;
 
 import az.code.tourapp.cache.interfaces.OfferCache;
+import az.code.tourapp.cache.interfaces.OfferCapCache;
 import az.code.tourapp.components.ReplyProcessor;
 import az.code.tourapp.components.interfaces.StateHandler;
 import az.code.tourapp.daos.interfaces.ActionDAO;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
@@ -27,7 +27,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OfferHandler implements StateHandler {
     private final WebhookBotComponent sender;
-    private final OfferCache cache;
+    private final OfferCapCache cache;
     private final AppUserDAO userDAO;
     private final SubCacheService cacheService;
     private final ActionDAO actionDAO;
@@ -45,7 +45,7 @@ public class OfferHandler implements StateHandler {
         if (message.isReply() && message.getReplyToMessage().hasPhoto()) {
             UserDataDTO userDataDTO = cacheService.findById(userId);
             Map<String, String> offer = userDataDTO.getSubscription();
-            offer.put("offerId", getOfferId(message.getReplyToMessage().getCaption()));
+            offer.put("messageId", String.valueOf(message.getReplyToMessage().getMessageId()));
             cacheService.update(userId, userDataDTO);
             cacheService.setState(userId, BasicState.PHONE.toString());
             cacheService.setMainState(userId, BasicState.CLIENT);
@@ -53,10 +53,6 @@ public class OfferHandler implements StateHandler {
         }
 
         return replyProcessor.sendNextAction(userId, chatId);
-    }
-
-    private String getOfferId(String caption) {
-        return caption.substring(caption.lastIndexOf("#") + 1);
     }
 
     @Override

@@ -4,6 +4,7 @@ import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.DictionaryDAO;
 import az.code.tourapp.dtos.DictionaryDTO;
 import az.code.tourapp.models.BotState;
+import az.code.tourapp.models.Error;
 import az.code.tourapp.models.Locale;
 import az.code.tourapp.models.Reply;
 import org.quartz.Job;
@@ -31,6 +32,7 @@ public class DictionaryJob implements Job {
                 .botStates(dic.getData(BotState.class))
                 .replyList(dic.getData(Reply.class))
                 .locales(dic.getData(Locale.class))
+                .errors(dic.getData(Error.class))
                 .build());
     }
 }

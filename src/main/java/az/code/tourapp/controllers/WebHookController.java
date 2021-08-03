@@ -2,7 +2,7 @@ package az.code.tourapp.controllers;
 
 import az.code.tourapp.TelegramWHBot;
 import az.code.tourapp.components.WebhookBotComponent;
-import az.code.tourapp.exceptions.Error;
+import az.code.tourapp.exceptions.ValidationException;
 import az.code.tourapp.exceptions.NotFound;
 import az.code.tourapp.models.Offer;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ public class WebHookController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @ExceptionHandler(Error.class)
-    public ResponseEntity<String> errorHandler(Error ex) {
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<String> errorHandler(ValidationException ex) {
         log.warn(ex.getMessage());
         sender.sendMessage(ex.getMessageData());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);

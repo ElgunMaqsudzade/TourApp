@@ -1,6 +1,6 @@
 package az.code.tourapp.jobs;
 
-import az.code.tourapp.cache.interfaces.OfferCache;
+import az.code.tourapp.cache.interfaces.OfferCapCache;
 import az.code.tourapp.dtos.TimerInfoDTO;
 import az.code.tourapp.models.Offer;
 import az.code.tourapp.services.interfaces.MessageService;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DBOffersJob implements Job {
     private final OfferService offerService;
-    private final OfferCache cache;
+    private final OfferCapCache cache;
     private final MessageService service;
 
     @Override

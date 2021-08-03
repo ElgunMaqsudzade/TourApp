@@ -1,12 +1,11 @@
 package az.code.tourapp.components;
 
-import az.code.tourapp.cache.interfaces.OfferCache;
+import az.code.tourapp.cache.interfaces.OfferCapCache;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.AppUserDAO;
 import az.code.tourapp.models.AppUser;
 import az.code.tourapp.models.enums.BasicState;
-import az.code.tourapp.exceptions.Error;
-import az.code.tourapp.services.interfaces.MessageService;
+import az.code.tourapp.exceptions.ValidationException;
 import az.code.tourapp.services.interfaces.SubCacheService;
 import az.code.tourapp.utils.EnumUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +24,13 @@ public class TelegramFacade {
     private final SubCacheService cache;
     private final BotStateContext stateContext;
     private final AppUserDAO appUserDAO;
-    private final OfferCache offerCache;
+    private final OfferCapCache offerCapCache;
 
     private final String IGNORE;
 
-    public TelegramFacade(OfferCache offerCache, AppUserDAO appUserDAO, SubCacheService cache, BotStateContext stateContext, BotConfig config) {
+    public TelegramFacade(OfferCapCache offerCapCache, AppUserDAO appUserDAO, SubCacheService cache, BotStateContext stateContext, BotConfig config) {
         this.appUserDAO = appUserDAO;
-        this.offerCache = offerCache;
+        this.offerCapCache = offerCapCache;
         this.cache = cache;
         this.stateContext = stateContext;
         this.IGNORE = config.getIgnore().getHard();
@@ -73,19 +72,19 @@ public class TelegramFacade {
                     if (!cache.existsById(userId))
                         cache.create(userId, chatId);
                     else
-                        throw new Error("You should first stop ongoing subscription -> /stop", chatId);
+                        throw new ValidationException("You should first stop ongoing subscription -> /stop", chatId);
                 }
                 if (cache.existsById(userId)) {
                     cache.setState(userId, state.get().toString());
                     switch (state.get()) {
                         case STOP:
                             AppUser appUser = appUserDAO.findById(userId);
-                            offerCache.delete(appUser.getUuid());
+                            offerCapCache.delete(appUser.getUuid());
                             cache.delete(userId, chatId);
                             return null;
                     }
                 } else {
-                    throw new Error("You dont have any ongoing subscription. Please write -> /start for starting.", chatId);
+                    throw new ValidationException("You dont have any ongoing subscription. Please write -> /start for starting.", chatId);
                 }
             }
         }

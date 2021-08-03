@@ -7,10 +7,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 @Getter
-public class Error extends RuntimeException {
+public class ValidationException extends RuntimeException {
     private final SendMessage messageData;
 
-    public Error(String message, Long chatId) {
+    public ValidationException(String message, Long chatId) {
         super(message);
         this.messageData = new SendMessage(chatId.toString(), message);
     }

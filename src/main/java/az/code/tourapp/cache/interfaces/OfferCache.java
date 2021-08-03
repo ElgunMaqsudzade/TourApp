@@ -1,23 +1,18 @@
 package az.code.tourapp.cache.interfaces;
 
-import az.code.tourapp.dtos.OfferCacheDTO;
-
-import java.util.Set;
+import java.util.Map;
 
 public interface OfferCache {
-    boolean existsById(String UUID);
 
-    void delete(String UUID);
+    boolean existsById(String uuid);
 
-    OfferCacheDTO findById(String UUID);
+    void delete(String uuid);
 
-    void save(String UUID, OfferCacheDTO userData);
+    Map<Integer, Long> findById(String uuid);
 
-    void create(String UUID);
+    Long findById(String uuid, Integer messageId);
 
-    OfferCacheDTO increase(String UUID);
+    void save(String uuid, Map<Integer, Long> map);
 
-    OfferCacheDTO setLocked(boolean value, String uuid);
-
-    Set<String> getUUIDList();
+    void add(String uuid, Integer messageId, Long offerId);
 }

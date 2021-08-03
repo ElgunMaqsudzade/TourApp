@@ -5,9 +5,10 @@ import az.code.tourapp.cache.interfaces.DictionaryCache;
 import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.ActionDAO;
 import az.code.tourapp.dtos.KeyboardDTO;
+import az.code.tourapp.models.Error;
 import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.models.enums.InputType;
-import az.code.tourapp.exceptions.Error;
+import az.code.tourapp.exceptions.ValidationException;
 import az.code.tourapp.models.*;
 import az.code.tourapp.services.interfaces.SubCacheService;
 import org.springframework.stereotype.Component;
@@ -15,12 +16,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -59,8 +55,8 @@ public class ReplyProcessor {
         while (true) {
             String botState = cache.getBotState(userId).getState();
             Optional<Action> opAction = actionDAO.getAction(botState, usersAnswer, locale);
-            Reply errorReply = dCache.getReply(BasicState.ERROR.toString(), locale);
-            if (opAction.isEmpty()) throw new Error(errorReply.getMessage(), chatId);
+            Error errorReply = dCache.getError(botState, locale);
+            if (opAction.isEmpty()) throw new ValidationException(errorReply.getErrorMessage(), chatId);
             Action action = opAction.get();
             if (action.getInputType().equals(InputType.VOID)) {
                 Reply reply = dCache.getReply(botState, locale);
@@ -82,17 +78,17 @@ public class ReplyProcessor {
         }
         String locale = cache.getLocale(userId);
         String botState = cache.getBotState(userId).getState();
-        Reply errorReply = dCache.getReply(BasicState.ERROR.toString(), locale);
+        Error errorReply = dCache.getError(botState, locale);
         Optional<Action> action = actionDAO.getAction(botState, usersAnswer, locale);
 
         if (action.isPresent()) {
             if (action.get().getCurrentState().isSavable()) {
                 if (!cache.saveData(userId, botState, usersAnswer))
-                    throw new Error(errorReply.getMessage(), chatId);
+                    throw new ValidationException(errorReply.getErrorMessage(), chatId);
             }
             cache.setState(userId, action.get().getNextState().getState());
         } else
-            throw new Error(errorReply.getMessage(), chatId);
+            throw new ValidationException(errorReply.getErrorMessage(), chatId);
 
         return processFinalAction(userId, chatId, message_id, usersAnswer);
     }
@@ -120,19 +116,6 @@ public class ReplyProcessor {
         }
 
         ReplyKeyboard replyKeyboard = context.generateKeyboard(buttons);
-
-
-        if (botState.equals(BasicState.PHONE.toString())) {
-            KeyboardRow keyboardFirstRow = new KeyboardRow();
-            KeyboardButton keyboardButton = KeyboardButton.builder().text("Share your number >").requestContact(true).build();
-            keyboardFirstRow.add(keyboardButton);
-            replyKeyboard = ReplyKeyboardMarkup.builder()
-                    .resizeKeyboard(true)
-                    .oneTimeKeyboard(true)
-                    .keyboardRow(keyboardFirstRow)
-                    .build();
-        }
-
         replyToUser.setReplyMarkup(replyKeyboard);
 
         if (usersAnswer != null && IGNORE.stream().anyMatch(usersAnswer::contains)) {

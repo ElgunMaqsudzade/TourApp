@@ -48,6 +48,7 @@ public class BotConfig {
         private String subscription;
         private String dictionary;
         private String offer;
+        private String offerCap;
     }
 
     @Data

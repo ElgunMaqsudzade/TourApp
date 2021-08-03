@@ -1,6 +1,7 @@
 package az.code.tourapp.dtos;
 
 import az.code.tourapp.models.BotState;
+import az.code.tourapp.models.Error;
 import az.code.tourapp.models.Locale;
 import az.code.tourapp.models.Reply;
 import lombok.AllArgsConstructor;
@@ -19,4 +20,5 @@ public class DictionaryDTO implements Serializable {
     private List<Reply> replyList;
     private List<BotState> botStates;
     private List<Locale> locales;
+    private List<Error> errors;
 }

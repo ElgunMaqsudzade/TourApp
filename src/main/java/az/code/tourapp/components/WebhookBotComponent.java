@@ -105,11 +105,12 @@ public class WebhookBotComponent extends TelegramWebhookBot {
     }
 
 
-    public void sendPhoto(SendPhoto photo) {
+    public Message sendPhoto(SendPhoto photo) {
         try {
-            execute(photo);
+            return execute(photo);
         } catch (TelegramApiException e) {
             log.error(e.getMessage());
+            return null;
         }
     }
 

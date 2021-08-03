@@ -15,7 +15,7 @@ class ErrorTest {
         String message = "salam";
         Long userId = 123324L;
         //when
-        Throwable thrown = catchThrowable(() -> { throw new Error(message,userId); });
+        Throwable thrown = catchThrowable(() -> { throw new ValidationException(message,userId); });
         //expected
         assertThat(thrown).hasMessageContaining(message);
     }

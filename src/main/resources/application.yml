@@ -1,6 +1,6 @@
 spring:
-#  profiles:
-#    active: dev
+  profiles:
+    active: dev
   jpa:
     hibernate:
       ddl-auto: update
@@ -27,6 +27,7 @@ telegrambot:
     subscription: telegramuserdata
     dictionary: telegramdictionarydata
     offer: telegramofferdata
+    offer-cap: telegramoffercap
   offer:
     image:
       extension: '.png'

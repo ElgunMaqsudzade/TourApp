@@ -1,6 +1,7 @@
 package az.code.tourapp.services;
 
 import az.code.tourapp.cache.interfaces.OfferCache;
+import az.code.tourapp.cache.interfaces.OfferCapCache;
 import az.code.tourapp.components.ReplyProcessor;
 import az.code.tourapp.components.WebhookBotComponent;
 import az.code.tourapp.daos.interfaces.AppUserDAO;
@@ -14,12 +15,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 @RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
     private final SubCacheService cache;
-    private final OfferCache oCache;
+    private final OfferCapCache oCache;
+    private final OfferCache offerCache;
     private final WebhookBotComponent sender;
     private final AppUserDAO appUserDAO;
     private final ImageUtil imageUtil;
@@ -38,7 +41,7 @@ public class MessageServiceImpl implements MessageService {
         String text = offer.getMessage();
         String uuid = offer.getUUID();
 
-        sender.sendPhoto(SendPhoto
+        Message message = sender.sendPhoto(SendPhoto
                 .builder()
                 .chatId(String.valueOf(chatId))
                 .caption(text)
@@ -46,6 +49,7 @@ public class MessageServiceImpl implements MessageService {
                 .photo(imageUtil.getInputFile(offer.getFileAsBytes()))
                 .build());
 
+        offerCache.add(uuid, message.getMessageId(), offer.getId());
         OfferCacheDTO next = oCache.increase(uuid);
         if (next.isLocked()) {
             cache.setState(userId, BasicState.NEXT.toString());

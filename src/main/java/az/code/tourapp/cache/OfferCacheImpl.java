@@ -1,90 +1,66 @@
 package az.code.tourapp.cache;
 
 import az.code.tourapp.cache.interfaces.OfferCache;
-import az.code.tourapp.components.SchedulerExecutor;
 import az.code.tourapp.configs.BotConfig;
-import az.code.tourapp.dtos.OfferCacheDTO;
 import az.code.tourapp.exceptions.NotFound;
-import az.code.tourapp.services.interfaces.OfferService;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class OfferCacheImpl implements OfferCache {
-    OfferService offerService;
-    SchedulerExecutor sch;
-    HashOperations<String, String, OfferCacheDTO> hashOps;
+    HashOperations<String, String, Map<Integer, Long>> hashOps;
 
     private final String HASH_KEY;
 
-    private final Integer offerCount;
-
-    public OfferCacheImpl(SchedulerExecutor sch, OfferService offerService, RedisTemplate<String, Object> template, BotConfig config) {
-        this.offerService = offerService;
+    public OfferCacheImpl(RedisTemplate<String, Object> template, BotConfig config) {
         this.hashOps = template.opsForHash();
         this.HASH_KEY = config.getRedis().getOffer();
-        this.sch = sch;
-        this.offerCount = config.getOffer().getCount();
     }
 
     @Override
-    public boolean existsById(String UUID) {
-        return hashOps.hasKey(HASH_KEY, UUID);
+    public boolean existsById(String uuid) {
+        return hashOps.hasKey(HASH_KEY, uuid);
     }
 
     @Override
-    public void delete(String UUID) {
-        offerService.deleteByUUID(UUID);
-        hashOps.delete(HASH_KEY, UUID);
+    public void delete(String uuid) {
+        hashOps.delete(HASH_KEY, uuid);
     }
 
     @Override
-    public OfferCacheDTO findById(String UUID) {
-        if (!hashOps.hasKey(HASH_KEY, UUID)) {
-            throw new NotFound("Offer not found");
+    public Map<Integer, Long> findById(String uuid) {
+        if (!hashOps.hasKey(HASH_KEY, uuid)) {
+            throw new NotFound("Offers not found");
         }
-        return hashOps.get(HASH_KEY, UUID);
+        return hashOps.get(HASH_KEY, uuid);
     }
 
     @Override
-    public void save(String UUID, OfferCacheDTO userData) {
-        hashOps.put(HASH_KEY, UUID, userData);
-    }
-
-    @Override
-    public void create(String UUID) {
-        if (!existsById(UUID))
-            hashOps.put(HASH_KEY, UUID, OfferCacheDTO.builder().build());
-    }
-
-    @Override
-    public OfferCacheDTO increase(String UUID) {
-        OfferCacheDTO cacheDTO = findById(UUID);
-        cacheDTO.setOfferCount(cacheDTO.getOfferCount() + 1);
-        if (cacheDTO.getOfferCount() % offerCount == 0) {
-            cacheDTO.setLocked(true);
+    public Long findById(String uuid, Integer messageId) {
+        Map<Integer, Long> map = findById(uuid);
+        if (!map.containsKey(messageId)) {
+            throw new NotFound("OfferId not found");
         }
-        save(UUID, cacheDTO);
-        return cacheDTO;
+        return map.get(messageId);
     }
 
     @Override
-    public OfferCacheDTO setLocked(boolean value, String uuid) {
-        OfferCacheDTO cacheDTO = findById(uuid);
-        cacheDTO.setLocked(value);
-        save(uuid, cacheDTO);
-        if (!value) {
-            sch.runDBOffersJob(uuid);
+    public void save(String uuid, Map<Integer, Long> map) {
+        hashOps.put(HASH_KEY, uuid, map);
+    }
+
+    @Override
+    public void add(String uuid, Integer messageId, Long offerId) {
+        Map<Integer, Long> map = new HashMap<>();
+        if (existsById(uuid)) {
+            map = findById(uuid);
         }
-        return cacheDTO;
+        map.put(messageId, offerId);
+        save(uuid, map);
     }
 
-
-    @Override
-    public Set<String> getUUIDList() {
-        return hashOps.keys(HASH_KEY);
-    }
 }

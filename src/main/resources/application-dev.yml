@@ -16,7 +16,7 @@ spring:
 
 telegrambot:
   username: '@MyTourAppBot'
-  path: https://c16529e6ab59.ngrok.io
+  path: https://1709c9d312d3.ngrok.io
   token: 1925789901:AAHh8AkOrUwUrTsXOjCbtqWNLbY8eoP2h_E
   proxy:
     type: no_proxy
@@ -31,12 +31,13 @@ telegrambot:
     subscription: telegramuserdata
     dictionary: telegramdictionarydata
     offer: telegramofferdata
+    offer-cap: telegramoffercap
   offer:
     image:
       extension: '.png'
       root: src/main/resources/images
     time:
-      start: '09:00'
+      start: '06:33'
       end: '23:00'
     count: 3
 server:

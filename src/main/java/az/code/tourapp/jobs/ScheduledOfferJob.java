@@ -1,7 +1,7 @@
 package az.code.tourapp.jobs;
 
 
-import az.code.tourapp.cache.interfaces.OfferCache;
+import az.code.tourapp.cache.interfaces.OfferCapCache;
 import az.code.tourapp.models.Offer;
 import az.code.tourapp.services.interfaces.MessageService;
 import az.code.tourapp.services.interfaces.OfferService;
@@ -15,7 +15,7 @@ import java.util.Set;
 
 @RequiredArgsConstructor
 public class ScheduledOfferJob implements Job {
-    private final OfferCache cache;
+    private final OfferCapCache cache;
     private final OfferService offerService;
     private final MessageService service;
 

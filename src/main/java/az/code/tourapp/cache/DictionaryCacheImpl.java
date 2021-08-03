@@ -7,9 +7,11 @@ import az.code.tourapp.dtos.DictionaryDTO;
 import az.code.tourapp.dtos.UserDataDTO;
 import az.code.tourapp.exceptions.NotFound;
 import az.code.tourapp.models.BotState;
+import az.code.tourapp.models.Error;
 import az.code.tourapp.models.Locale;
 import az.code.tourapp.models.Reply;
 import az.code.tourapp.models.enums.BasicCache;
+import az.code.tourapp.models.enums.BasicState;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -49,6 +51,21 @@ public class DictionaryCacheImpl implements DictionaryCache {
         }
         if (reply.isEmpty()) throw new NotFound("Reply not found in cache");
         return reply.get();
+    }
+
+    @Override
+    public Error getError(String state, String lang) {
+        Optional<Error> error = Optional.empty();
+        List<Error> errors = Objects.requireNonNull(hashOps.get(HASH_KEY, HASH_KEY)).getErrors();
+        if (hashOps.hasKey(HASH_KEY, HASH_KEY)) {
+            error = errors.parallelStream().filter(i -> i.getState().getState().equals(state) && i.getLocale().getLang().equals(lang)).findFirst();
+        }
+        if (error.isEmpty()){
+            error = errors.parallelStream()
+                    .filter(i -> i.getState().getState().equals(BasicState.ERROR.toString()) && i.getLocale().getLang().equals(lang))
+                    .findFirst();
+        };
+        return error.get();
     }
 
     @Override

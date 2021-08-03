@@ -1,5 +1,6 @@
 package az.code.tourapp.components.messagehandlers;
 
+import az.code.tourapp.cache.interfaces.DictionaryCache;
 import az.code.tourapp.components.ReplyProcessor;
 import az.code.tourapp.components.WebhookBotComponent;
 import az.code.tourapp.components.interfaces.StateHandler;
@@ -7,8 +8,9 @@ import az.code.tourapp.configs.BotConfig;
 import az.code.tourapp.daos.interfaces.ActionDAO;
 import az.code.tourapp.daos.interfaces.ReplyDAO;
 import az.code.tourapp.dtos.UserDataDTO;
-import az.code.tourapp.exceptions.Error;
+import az.code.tourapp.exceptions.ValidationException;
 import az.code.tourapp.models.Action;
+import az.code.tourapp.models.Error;
 import az.code.tourapp.models.Reply;
 import az.code.tourapp.models.enums.BasicState;
 import az.code.tourapp.services.interfaces.SubCacheService;
@@ -22,6 +24,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 
 @Slf4j
@@ -29,7 +32,7 @@ import java.util.Optional;
 public class ClientHandler implements StateHandler {
     private final ReplyProcessor replyProcessor;
     private final SubCacheService cache;
-    private final ReplyDAO replyDAO;
+    private final DictionaryCache dCache;
     private final ActionDAO actionDAO;
     private final WebhookBotComponent sender;
 
@@ -37,13 +40,13 @@ public class ClientHandler implements StateHandler {
 
     public ClientHandler(ReplyProcessor replyProcessor,
                          SubCacheService cache,
-                         ReplyDAO replyDAO,
+                         DictionaryCache dCache,
                          ActionDAO actionDAO,
                          WebhookBotComponent sender,
                          BotConfig config) {
         this.replyProcessor = replyProcessor;
         this.cache = cache;
-        this.replyDAO = replyDAO;
+        this.dCache = dCache;
         this.actionDAO = actionDAO;
         this.sender = sender;
         this.IGNORE = config.getIgnore().getSave();
@@ -84,18 +87,20 @@ public class ClientHandler implements StateHandler {
         }
         String locale = cache.getLocale(userId);
         String botState = cache.getBotState(userId).getState();
-        Reply errorReply = replyDAO.getReply(BasicState.ERROR.toString(), locale);
+        Error errorReply = dCache.getError(botState, locale);
+
+
 
         Optional<Action> action = actionDAO.getAction(botState, usersAnswer, locale);
         if (action.isPresent()) {
             if (action.get().getCurrentState().isSavable()) {
                 if (!cache.saveData(userId, botState, usersAnswer))
-                    throw new Error(errorReply.getMessage(), chatId);
+                    throw new ValidationException(errorReply.getErrorMessage(), chatId);
             }
             sender.sendEditedMessage(chatId, message_id, usersAnswer, null);
             cache.setState(userId, action.get().getNextState().getState());
         } else
-            throw new Error(errorReply.getMessage(), chatId);
+            throw new ValidationException(errorReply.getErrorMessage(), chatId);
 
 
         return replyProcessor.processFinalAction(userId, chatId, message_id, usersAnswer);
