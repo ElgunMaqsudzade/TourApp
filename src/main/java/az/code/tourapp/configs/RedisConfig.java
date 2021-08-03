@@ -1,9 +1,6 @@
 package az.code.tourapp.configs;
 
 
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.RedisURI;
-import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
