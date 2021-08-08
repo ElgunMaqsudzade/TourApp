@@ -44,7 +44,7 @@ public class DateKeyboardGenerator implements ButtonGenerator<InlineKeyboardMark
     }
 
     public InlineKeyboardMarkup generateKeyboard(LocalDate date) {
-        if (date == null || date.isBefore(LocalDate.now())) {
+        if (date == null) {
             return null;
         }
 
@@ -74,7 +74,8 @@ public class DateKeyboardGenerator implements ButtonGenerator<InlineKeyboardMark
         }
 
         List<KeyboardDTO> controlsRow = new ArrayList<>();
-        controlsRow.add(createButton("<|" + date, "<"));
+        if (date.isAfter(LocalDate.now()))
+            controlsRow.add(createButton("<|" + date, "<"));
         controlsRow.add(createButton(">|" + date, ">"));
         keyboard.add(controlsRow);
 
