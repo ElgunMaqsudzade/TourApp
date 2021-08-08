@@ -44,7 +44,7 @@ public class DateKeyboardGenerator implements ButtonGenerator<InlineKeyboardMark
     }
 
     public InlineKeyboardMarkup generateKeyboard(LocalDate date) {
-        if (date == null) {
+        if (date == null || date.isBefore(LocalDate.now())) {
             return null;
         }
 
